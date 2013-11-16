@@ -7,8 +7,11 @@
 //
 
 #import "ViewController.h"
+#import "SeamCalcSlider.h"
 
 @interface ViewController ()
+
+@property (strong, nonatomic) SeamCalcSlider *slider;
 
 @end
 
@@ -17,7 +20,19 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
+	
+    CGFloat w = self.view.frame.size.width;
+    CGFloat h = self.view.frame.size.height;
+    
+    UIImage *image = [UIImage imageNamed:@"slider"];
+    
+    CGFloat x = w/2.0 - image.size.width/2.0;
+    CGFloat y = h/2.0 - image.size.height/2.0;
+    
+    self.slider = [[SeamCalcSlider alloc] initWithFrame:CGRectMake(x, y, image.size.width, image.size.height)
+                                                  image:[UIImage imageNamed:@"slider"]];
+    
+    [self.view addSubview:self.slider];
 }
 
 - (void)didReceiveMemoryWarning
