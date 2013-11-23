@@ -59,6 +59,8 @@
                                          return value * 0.0393700787;
                                      }];
     
+    self.slider.highlightCurrentMeasurement = YES;
+    
     [self.view addSubview:self.slider];
 }
 

@@ -113,8 +113,13 @@
     CGPoint touchPoint = [touch locationInView:self];
     CGFloat movedX = touchPoint.x - distanceFromCenter;
     if (movedX >= self.handle.frame.size.width/2.0 && movedX <= self.frame.size.width - (self.handle.frame.size.width/2.0)) {
-        self.handle.center = CGPointMake(touchPoint.x - distanceFromCenter,
-                                         self.handle.center.y);
+        
+        CGFloat cx = touchPoint.x - distanceFromCenter;
+        self.handle.center = CGPointMake(cx, self.handle.center.y);
+        
+        CGFloat wscr = self.frame.size.width - self.handle.frame.size.width;
+        CGFloat xscr = self.handle.center.x - self.handle.frame.size.width/2.0;
+        self.value = self.minValue + ((xscr/wscr) * (self.maxValue - self.minValue));
         
         [self setNeedsLayout];
         [self sendActionsForControlEvents:UIControlEventValueChanged];
@@ -182,23 +187,47 @@
     CGFloat right = self.frame.size.width - handleSize/2.0;
     CGFloat scaleWidth = right - left;
     
-    // main line
+    /*
+     CGColorSpaceRef myColorspace=CGColorSpaceCreateDeviceRGB();
+     size_t num_locations = 2;
+     CGFloat locations[2] = { 1.0, 0.0 };
+     CGFloat components[8] =	{ 0.0, 0.0, 0.0, 1.0,    1.0, 1.0, 1.0, 1.0 };
+     
+     CGGradientRef myGradient = CGGradientCreateWithColorComponents(myColorspace, components, locations, num_locations);
+     
+    CGContextSaveGState(context);
+    CGContextAddRect(context, CGRectMake(x, y, width, height));
+    CGContextClip(context);
+    CGContextDrawLinearGradient (context, gradient, startPoint, endPoint, 0);
+    CGContextRestoreGState(context);
+    */
     
     CGContextRef context = UIGraphicsGetCurrentContext();
-    CGContextSetRGBStrokeColor(context, 0.8, 0.8, 0.8, 1.0);
-    CGContextSetLineWidth(context, lineWidth);
     
-    CGContextMoveToPoint(context, left, self.frame.size.height/2.0);
-    CGContextAddLineToPoint(context, right, self.frame.size.height/2.0);
-    CGContextStrokePath(context);
+    // main line
+    
+    /*if (_slider.highlightCurrentMeasurement) {
+        
+    } else {*/
+        // use simple line
+        CGContextSetRGBStrokeColor(context, 0.8, 0.8, 0.8, 1.0);
+        CGContextSetLineWidth(context, lineWidth);
+        CGContextMoveToPoint(context, left, self.frame.size.height/2.0);
+        CGContextAddLineToPoint(context, right, self.frame.size.height/2.0);
+        CGContextStrokePath(context);
+    //}
     
     // primary scale lines
     for (ScaleMarker *marker in _slider.primaryScaleMarkers) {
         CGFloat x = left + (([marker.value floatValue] - _slider.minValue)/(_slider.maxValue - _slider.minValue)) * scaleWidth;
         CGFloat h = self.frame.size.height/2.0 - ((self.frame.size.height/2.0) * marker.lengthProportion);
-        CGContextMoveToPoint(context, x, self.frame.size.height/2.0);
-        CGContextAddLineToPoint(context, x, h);
-        CGContextStrokePath(context);
+        /*if (_slider.highlightCurrentMeasurement) {
+            
+        } else {*/
+            CGContextMoveToPoint(context, x, self.frame.size.height/2.0);
+            CGContextAddLineToPoint(context, x, h);
+            CGContextStrokePath(context);
+        //}
     }
     
     // secondary scale lines
@@ -206,9 +235,13 @@
         CGFloat primValue = _slider.convertToPrimary([marker.value floatValue]);
         CGFloat x = left + ((primValue - _slider.minValue)/(_slider.maxValue - _slider.minValue)) * scaleWidth;
         CGFloat h = self.frame.size.height/2.0 + ((self.frame.size.height/2.0) * marker.lengthProportion);
-        CGContextMoveToPoint(context, x, self.frame.size.height/2.0);
-        CGContextAddLineToPoint(context, x, h);
-        CGContextStrokePath(context);
+        /*if (_slider.highlightCurrentMeasurement) {
+            
+        } else {*/
+            CGContextMoveToPoint(context, x, self.frame.size.height/2.0);
+            CGContextAddLineToPoint(context, x, h);
+            CGContextStrokePath(context);
+        //}
     }
 }
 

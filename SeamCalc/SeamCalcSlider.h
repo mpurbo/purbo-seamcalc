@@ -48,6 +48,8 @@ typedef CGFloat (^ConverterBlock)(CGFloat value);
 @interface SeamCalcSlider : UIControl
 
 @property (nonatomic, assign) CGFloat value;
+@property (nonatomic, assign) BOOL highlightCurrentMeasurement;
+
 @property (nonatomic, readonly, assign) CGFloat minValue;
 @property (nonatomic, readonly, assign) CGFloat maxValue;
 
