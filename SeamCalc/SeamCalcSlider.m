@@ -2,68 +2,144 @@
 //  SeamCalcSlider.m
 //  SeamCalc
 //
-//  Created by Purbo Mohamad on 11/16/13.
+//  Created by Purbo Mohamad on 11/17/13.
 //  Copyright (c) 2013 Purbo Mohamad. All rights reserved.
 //
 
 #import "SeamCalcSlider.h"
 
+@interface SeamCalcHandle : UIView
+
+@end
+
+@interface SeamCalcScale : UIView
+
+@end
+
 @interface SeamCalcSlider() {
-    CGPoint touchStart;
+    BOOL draggingHandle;
+    CGFloat distanceFromCenter;
 }
 
-@property (strong, nonatomic) UIImageView *imageView;
-@property (assign) float topValue;
-@property (strong, nonatomic) UILabel *topLabel;
-@property (assign) float bottomValue;
-@property (strong, nonatomic) UILabel *bottomLabel;
+@property (nonatomic, strong) SeamCalcHandle *handle;
+@property (nonatomic, strong) SeamCalcScale *scale;
 
 @end
 
 @implementation SeamCalcSlider
 
-- (id)initWithFrame:(CGRect)frame image:(UIImage *)image
+- (id)initWithFrame:(CGRect)frame handleSize:(CGFloat)handleSize
 {
     self = [super initWithFrame:frame];
     if (self) {
-        // background image
-        self.imageView = [[UIImageView alloc] initWithImage:image];
-        self.imageView.frame = CGRectMake(0, 0, frame.size.width, frame.size.height);
-        [self addSubview:self.imageView];
-        // top label
-        self.topValue = 0.0;
-        self.topLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0, 0.0,
-                                                                  frame.size.width, frame.size.width)];
-        self.topLabel.textAlignment = NSTextAlignmentCenter;
-        self.topLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:14.0];
-        self.topLabel.text = [NSString stringWithFormat:@"%.1f", self.topValue];
-        [self addSubview:self.topLabel];
-        // bottom label
-        self.bottomValue = 0.0;
-        self.bottomLabel = [[UILabel alloc] initWithFrame:CGRectMake(0.0, frame.size.height - frame.size.width,
-                                                                     frame.size.width, frame.size.width)];
-        self.bottomLabel.textAlignment = NSTextAlignmentCenter;
-        self.bottomLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:14.0];
-        self.bottomLabel.text = [NSString stringWithFormat:@"%.1f", self.bottomValue];
-        [self addSubview:self.bottomLabel];
+        self.scale = [[SeamCalcScale alloc] initWithFrame:CGRectMake(handleSize/2.0, 0.0, self.frame.size.width - handleSize/2.0, self.frame.size.height)];
+        self.handle = [[SeamCalcHandle alloc] initWithFrame:CGRectMake(0.0, self.frame.size.height/2.0 - handleSize/2.0, handleSize, handleSize)];
+        
+        [self addSubview:self.scale];
+        [self addSubview:self.handle];
     }
     return self;
 }
 
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-    touchStart = [[touches anyObject] locationInView:self];
+-(void)layoutSubviews
+{
+    /*
+     // Set the initial state
+     _minThumb.center = CGPointMake([self xForValue:selectedMinimumValue], self.center.y);
+     
+     _maxThumb.center = CGPointMake([self xForValue:selectedMaximumValue], self.center.y);
+     
+     
+     NSLog(@"Tapable size %f", _minThumb.bounds.size.width);
+     [self updateTrackHighlight];
+     */
 }
 
-- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
-    CGPoint point = [[touches anyObject] locationInView:self];
-    //self.center = CGPointMake(self.center.x + point.x - touchStart.x, self.center.y + point.y - touchStart.y);
-    // limit change to x-direction only
-    CGFloat x = self.center.x + point.x - touchStart.x;
-    self.center = CGPointMake(x, self.center.y);
-    self.topValue = x - self.superview.center.x;
-    self.topLabel.text = [NSString stringWithFormat:@"%.1f", self.topValue];
-    self.bottomValue = (x - self.superview.center.x) * 0.03937;
-    self.bottomLabel.text = [NSString stringWithFormat:@"%.1f", self.bottomValue];    
+- (BOOL)beginTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event
+{
+    CGPoint touchPoint = [touch locationInView:self];
+    
+    if (CGRectContainsPoint(self.handle.frame, touchPoint)) {
+        draggingHandle = YES;
+        distanceFromCenter = touchPoint.x - self.handle.center.x;
+    }
+    
+    return YES;
+}
+
+- (BOOL)continueTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event
+{
+    if (!draggingHandle){
+        return YES;
+    }
+    
+    CGPoint touchPoint = [touch locationInView:self];
+    self.handle.center = CGPointMake(touchPoint.x - distanceFromCenter,
+                                     self.handle.center.y);
+    
+    [self setNeedsLayout];
+    [self sendActionsForControlEvents:UIControlEventValueChanged];
+    
+    return YES;
+}
+
+- (void)endTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event
+{
+    draggingHandle = NO;
+}
+
+@end
+
+@implementation SeamCalcHandle
+
+- (id)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        self.backgroundColor = [UIColor clearColor];
+        self.userInteractionEnabled = NO;
+    }
+    return self;
+}
+
+- (void)drawRect:(CGRect)rect
+{
+    CGFloat lineWidth = 2;
+    CGRect borderRect = CGRectInset(rect, lineWidth * 0.5, lineWidth * 0.5);
+    
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextSetRGBStrokeColor(context, 0.0, 0.0, 0.0, 1.0);
+    CGContextSetRGBFillColor(context, 1.0, 1.0, 1.0, 1.0);
+    CGContextSetLineWidth(context, lineWidth);
+    CGContextFillEllipseInRect (context, borderRect);
+    CGContextStrokeEllipseInRect(context, borderRect);
+    CGContextFillPath(context);
+}
+
+@end
+
+@implementation SeamCalcScale
+
+- (id)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        self.backgroundColor = [UIColor clearColor];
+        self.userInteractionEnabled = NO;
+    }
+    return self;
+}
+
+- (void)drawRect:(CGRect)rect
+{
+    CGFloat lineWidth = 1;
+    
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextSetRGBStrokeColor(context, 0.8, 0.8, 0.8, 1.0);
+    CGContextSetLineWidth(context, lineWidth);
+    CGContextMoveToPoint(context, 0.0, self.frame.size.height/2.0);
+    CGContextAddLineToPoint(context, self.frame.size.width, self.frame.size.height/2.0);
+    CGContextStrokePath(context);
 }
 
 @end

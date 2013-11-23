@@ -24,13 +24,17 @@
     CGFloat w = self.view.frame.size.width;
     CGFloat h = self.view.frame.size.height;
     
-    UIImage *image = [UIImage imageNamed:@"slider"];
+    CGFloat cw = 240.0;
+    CGFloat ch = 80.0;
     
-    CGFloat x = w/2.0 - image.size.width/2.0;
-    CGFloat y = h/2.0 - image.size.height/2.0;
+    CGFloat x = w/2.0 - cw/2.0;
+    CGFloat y = h/2.0 - ch/2.0;
     
-    self.slider = [[SeamCalcSlider alloc] initWithFrame:CGRectMake(x, y, image.size.width, image.size.height)
-                                                  image:[UIImage imageNamed:@"slider"]];
+    self.slider = [[SeamCalcSlider alloc] initWithFrame:CGRectMake(x, y, cw, ch) handleSize:40.0];
+    self.slider.minValue = 0.0;
+    self.slider.maxValue = 40.0;
+    
+    //0.0393700787
     
     [self.view addSubview:self.slider];
 }
