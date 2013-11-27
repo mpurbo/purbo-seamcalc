@@ -8,6 +8,15 @@
 
 #import "SeamCalcSlider.h"
 
+@interface ScaleMarker()
+
+@property (nonatomic, readwrite, strong) NSNumber *value;
+@property (nonatomic, readwrite, assign) CGFloat lengthProportion;
+@property (nonatomic, readwrite, assign) BOOL labelVisible;
+@property (nonatomic, readwrite, assign) BOOL primary;
+
+@end
+
 @interface SeamCalcHandle : UIView
 
 @end
@@ -15,6 +24,8 @@
 @interface SeamCalcScale : UIView
 
 @property (nonatomic, weak) SeamCalcSlider *slider;
+
+- (ScaleMarker *)findMarkerClosestTo:(CGFloat)value;
 
 @end
 
@@ -69,6 +80,13 @@
         self.primaryScaleMarkers = primaryScaleMarkers;
         self.secondaryScaleMarkers = secondaryScaleMarkers;
         
+        for (ScaleMarker *marker in self.primaryScaleMarkers) {
+            marker.primary = YES;
+        }
+        for (ScaleMarker *marker in self.secondaryScaleMarkers) {
+            marker.primary = NO;
+        }
+        
         [self addSubview:self.scale];
         [self addSubview:self.handle];
         
@@ -104,6 +122,19 @@
     return YES;
 }
 
+- (CGFloat)xToValue:(CGFloat)x
+{
+    CGFloat wscr = self.frame.size.width - self.handle.frame.size.width;
+    CGFloat xscr = x - self.handle.frame.size.width/2.0;
+    return self.minValue + ((xscr/wscr) * (self.maxValue - self.minValue));
+}
+
+- (CGFloat)valueToX:(CGFloat)value
+{
+    CGFloat wscr = self.frame.size.width - self.handle.frame.size.width;
+    return ((wscr * (value - self.minValue))/(self.maxValue - self.minValue)) + self.handle.frame.size.width/2.0;
+}
+
 - (BOOL)continueTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event
 {
     if (!draggingHandle){
@@ -117,9 +148,7 @@
         CGFloat cx = touchPoint.x - distanceFromCenter;
         self.handle.center = CGPointMake(cx, self.handle.center.y);
         
-        CGFloat wscr = self.frame.size.width - self.handle.frame.size.width;
-        CGFloat xscr = self.handle.center.x - self.handle.frame.size.width/2.0;
-        self.value = self.minValue + ((xscr/wscr) * (self.maxValue - self.minValue));
+        _value = [self xToValue:cx];
         
         [self setNeedsLayout];
         [self.scale setNeedsDisplay];
@@ -132,6 +161,29 @@
 - (void)endTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event
 {
     draggingHandle = NO;
+    
+    // find & snap to closest marker
+    
+    ScaleMarker *marker = [self.scale findMarkerClosestTo:self.value];
+    //NSLog(@"Found closest marker: %@ (from value = %f)", marker.value, self.value);
+    
+    if (marker) {
+        CGFloat targetValue = marker.primary ? [marker.value floatValue] : self.convertToPrimary([marker.value floatValue]);
+        //NSLog(@"Target value: %f", targetValue);
+        [self setValue:targetValue];
+    }
+}
+
+- (void)setValue:(CGFloat)value
+{
+    // move handle
+    CGFloat cx = [self valueToX:value];
+    self.handle.center = CGPointMake(cx, self.handle.center.y);
+    
+    _value = value;
+    [self setNeedsLayout];
+    [self.scale setNeedsDisplay];
+    [self sendActionsForControlEvents:UIControlEventValueChanged];
 }
 
 @end
@@ -296,6 +348,53 @@
     return gray;
 }
 
+- (ScaleMarker *)findMarkerClosestTo:(CGFloat)value
+{
+    ScaleMarker *minMarker = [self findMarkerClosestTo:value inMarkers:_slider.primaryScaleMarkers];
+    if (minMarker) {
+        ScaleMarker *minMarker2 = [self findMarkerClosestTo:value inMarkers:_slider.secondaryScaleMarkers];
+        if (minMarker2) {
+            //NSLog(@"  value = %f, minMarker.value = %@", value, minMarker.value);
+            CGFloat dist1 = fabs(value - [minMarker.value floatValue]);
+            //NSLog(@"  dist1 = %f", dist1);
+            //NSLog(@"  value = %f, minMarker2.value = %@, conv = %f", value, minMarker2.value, self.slider.convertToPrimary([minMarker2.value floatValue]));
+            CGFloat dist2 = fabs(value - self.slider.convertToPrimary([minMarker2.value floatValue]));
+            //NSLog(@"  dist2 = %f", dist2);
+            if (dist2 < dist1) {
+                minMarker = minMarker2;
+            }
+        }
+    } else {
+        minMarker = [self findMarkerClosestTo:value inMarkers:_slider.secondaryScaleMarkers];
+    }
+    return minMarker;
+}
+
+- (ScaleMarker *)findMarkerClosestTo:(CGFloat)value inMarkers:(NSArray *)markers
+{
+    ScaleMarker *minMarker = nil;
+    CGFloat minDistance = _slider.maxValue;
+    
+    for (ScaleMarker *marker in markers) {
+        if (!minMarker) {
+            minDistance = marker.primary ?
+                fabs(value - [marker.value floatValue]) :
+                fabs(value - self.slider.convertToPrimary([marker.value floatValue]));
+            minMarker = marker;
+        } else {
+            CGFloat distance = marker.primary ?
+                fabs(value - [marker.value floatValue]) :
+                fabs(value - self.slider.convertToPrimary([marker.value floatValue]));
+            if (distance < minDistance) {
+                minDistance = distance;
+                minMarker = marker;
+            }
+        }
+    }
+    
+    return minMarker;
+}
+
 @end
 
 @implementation ScaleMixedNumber
@@ -320,14 +419,6 @@
     }
     return self;
 }
-
-@end
-
-@interface ScaleMarker()
-
-@property (nonatomic, readwrite, strong) NSNumber *value;
-@property (nonatomic, readwrite, assign) CGFloat lengthProportion;
-@property (nonatomic, readwrite, assign) BOOL labelVisible;
 
 @end
 
