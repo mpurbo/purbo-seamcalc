@@ -7,15 +7,8 @@
 //
 
 #import "SeamCalcSlider.h"
-
-@interface ScaleMarker()
-
-@property (nonatomic, readwrite, strong) NSNumber *value;
-@property (nonatomic, readwrite, assign) CGFloat lengthProportion;
-@property (nonatomic, readwrite, assign) BOOL labelVisible;
-@property (nonatomic, readwrite, assign) BOOL primary;
-
-@end
+#import <CoreText/CoreText.h>
+#import "ScaleMarkerPrivate.h"
 
 @interface SeamCalcHandle : UIView
 
@@ -236,20 +229,25 @@
 
 - (void)drawRect:(CGRect)rect
 {
-    CGFloat lineWidth = 2.0;
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    
+    // scale line width
+    CGFloat lineWidth = 1.0;
     
     CGFloat handleSize = _slider.handle.frame.size.width;
+    
+    // slider main line is from half of handle diameter to frame width - half of handle diameter
+    // so that the handle circle can go all the way to the frame left.
     CGFloat left = handleSize/2.0;
     CGFloat right = self.frame.size.width - handleSize/2.0;
     CGFloat scaleWidth = right - left;
-    
-    CGContextRef context = UIGraphicsGetCurrentContext();
     
     CGContextSetRGBStrokeColor(context, SC_GRAY);
     
     // primary scale lines
     for (ScaleMarker *marker in _slider.primaryScaleMarkers) {
         CGFloat x = left + (([marker.value floatValue] - _slider.minValue)/(_slider.maxValue - _slider.minValue)) * scaleWidth;
+        // height is subtracted by label height to make space for the label.
         CGFloat h = self.frame.size.height/2.0 - ((self.frame.size.height/2.0) * marker.lengthProportion);
         if (_slider.highlightCurrentMeasurement) {
             CGFloat gray = [self grayLevelFor:x inReferenceTo:_slider.handle.center.x maxDistance:(right - left)];
@@ -397,21 +395,73 @@
 
 @end
 
-@implementation ScaleMixedNumber
+@implementation MixedNumberView
 
-- (id)initWithFloat:(CGFloat)floatNumber
+- (id)initWithFloat:(CGFloat)floatNumber frame:(CGRect)frame
 {
-    self = [super  init];
+    self = [super initWithFrame:frame];
     if (self) {
-        // adapted from: http://www.ics.uci.edu/~eppstein/numth/frap.c
-        // TODO ...
+        
+        self.whole = floor(floatNumber);
+        
+        // calculating float number to fractional number with int components: whole numerator/denominator
+        // e.g. 1.25 -> 1 1/4
+        // adapted from: http://rosettacode.org/wiki/Convert_decimal_number_to_rational#C
+
+        CGFloat f = floatNumber - self.whole;
+        
+        NSInteger num;
+        NSInteger denom;
+        NSInteger md = 10;
+        
+        NSInteger a, h[3] = { 0, 1, 0 }, k[3] = { 1, 0, 0 };
+        NSInteger x, d, n = 1;
+        NSInteger i, neg = 0;
+        
+        if (md <= 1) {
+            denom = 1;
+            num = (NSInteger)f;
+        } else {
+            if (f < 0) { neg = 1; f = -f; }
+            
+            while (f != floor(f)) { n <<= 1; f *= 2; }
+            d = f;
+            
+            /* continued fraction and check denominator each step */
+            for (i = 0; i < 64; i++) {
+                a = n ? d / n : 0;
+                if (i && !a) break;
+                
+                x = d; d = n; n = x % n;
+                
+                x = a;
+                if (k[1] * a + k[0] >= md) {
+                    x = (md - k[0]) / k[1];
+                    if (x * 2 >= a || k[1] >= md)
+                        i = 65;
+                    else
+                        break;
+                }
+                
+                h[2] = x * h[1] + h[0]; h[0] = h[1]; h[1] = h[2];
+                k[2] = x * k[1] + k[0]; k[0] = k[1]; k[1] = k[2];
+            }
+            denom = k[1];
+            num = neg ? -h[1] : h[1];
+        }
+        
+        self.denominator = denom;
+        self.numerator = num;
+        
+        NSLog(@"%d %d/%d", self.whole, self.numerator, self.denominator);
+        
     }
     return self;
 }
 
-- (id)initWithWhole:(NSInteger)whole numerator:(NSUInteger)numerator denominator:(NSUInteger)denominator
+- (id)initWithWhole:(NSInteger)whole numerator:(NSUInteger)numerator denominator:(NSUInteger)denominator frame:(CGRect)frame
 {
-    self = [super  init];
+    self = [super initWithFrame:frame];
     if (self) {
         self.whole = whole;
         self.numerator = numerator;
@@ -420,80 +470,15 @@
     return self;
 }
 
-@end
-
-@implementation ScaleMarker
-
-- (id)initWithInt:(int)value
+- (void)drawRect:(CGRect)rect
 {
-    return [self initWithInt:value lengthProportion:1.0 labelVisible:YES];
-}
-
-- (id)initWithInt:(int)value lengthProportion:(CGFloat)lengthProportion
-{
-    return [self initWithInt:value lengthProportion:lengthProportion labelVisible:YES];
-}
-
-- (id)initWithInt:(int)value lengthProportion:(CGFloat)lengthProportion labelVisible:(BOOL)labelVisible
-{
-    self = [super init];
-    if (self) {
-        self.value = [NSNumber numberWithInt:value];
-        self.lengthProportion = lengthProportion;
-        self.labelVisible = labelVisible;
-    }
-    return self;
-}
-
-- (id)initWithFloat:(float)value
-{
-    return [self initWithFloat:value lengthProportion:1.0 labelVisible:YES];
-}
-
-- (id)initWithFloat:(float)value lengthProportion:(CGFloat)lengthProportion
-{
-    return [self initWithFloat:value lengthProportion:lengthProportion labelVisible:YES];
-}
-
-- (id)initWithFloat:(float)value lengthProportion:(CGFloat)lengthProportion labelVisible:(BOOL)labelVisible
-{
-    self = [super init];
-    if (self) {
-        self.value = [NSNumber numberWithFloat:value];
-        self.lengthProportion = lengthProportion;
-        self.labelVisible = labelVisible;
-    }
-    return self;
-}
-
-+ (ScaleMarker *)markerWithInt:(int)value
-{
-    return [[ScaleMarker alloc] initWithInt:value];
-}
-
-+ (ScaleMarker *)markerWithInt:(int)value lengthProportion:(CGFloat)lengthProportion
-{
-    return [[ScaleMarker alloc] initWithInt:value lengthProportion:lengthProportion];
-}
-
-+ (ScaleMarker *)markerWithInt:(int)value lengthProportion:(CGFloat)lengthProportion labelVisible:(BOOL)labelVisible
-{
-    return [[ScaleMarker alloc] initWithInt:value lengthProportion:lengthProportion labelVisible:labelVisible];
-}
-
-+ (ScaleMarker *)markerWithFloat:(float)value
-{
-    return [[ScaleMarker alloc] initWithFloat:value];
-}
-
-+ (ScaleMarker *)markerWithFloat:(float)value lengthProportion:(CGFloat)lengthProportion
-{
-    return [[ScaleMarker alloc] initWithFloat:value lengthProportion:lengthProportion];
-}
-
-+ (ScaleMarker *)markerWithFloat:(float)value lengthProportion:(CGFloat)lengthProportion labelVisible:(BOOL)labelVisible
-{
-    return [[ScaleMarker alloc] initWithFloat:value lengthProportion:lengthProportion labelVisible:labelVisible];
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGPathRef path = CGPathCreateWithRect(rect, NULL);
+    [[UIColor redColor] setFill];
+    [[UIColor greenColor] setStroke];
+    CGContextAddPath(context, path);
+    CGContextDrawPath(context, kCGPathFillStroke);
+    CGPathRelease(path);
 }
 
 @end

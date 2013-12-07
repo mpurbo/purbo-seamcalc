@@ -25,10 +25,12 @@
     CGFloat h = self.view.frame.size.height;
     
     CGFloat cw = 240.0;
-    CGFloat ch = 200.0;
+    CGFloat ch = 320.0;
     
     CGFloat x = w/2.0 - cw/2.0;
     CGFloat y = h/2.0 - ch/2.0;
+    
+    //ScaleMixedNumber *test = [[ScaleMixedNumber alloc] initWithFloat:1.625];
 
     self.slider = [[SeamCalcSlider alloc] initWithFrame:CGRectMake(x, y, cw, ch)
                                              handleSize:40.0

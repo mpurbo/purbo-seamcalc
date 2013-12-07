@@ -7,41 +7,18 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ScaleMarker.h"
 
 typedef CGFloat (^ConverterBlock)(CGFloat value);
 
-@interface ScaleMixedNumber : NSObject
+@interface MixedNumberView : UIView
 
 @property (nonatomic, assign) NSInteger whole;
 @property (nonatomic, assign) NSUInteger numerator;
 @property (nonatomic, assign) NSUInteger denominator;
 
-- (id)initWithFloat:(CGFloat)floatNumber;
-- (id)initWithWhole:(NSInteger)whole numerator:(NSUInteger)numerator denominator:(NSUInteger)denominator;
-
-@end
-
-@interface ScaleMarker : NSObject
-
-@property (nonatomic, readonly, strong) NSNumber *value;
-@property (nonatomic, readonly, assign) CGFloat lengthProportion;
-@property (nonatomic, readonly, assign) BOOL labelVisible;
-
-- (id)initWithInt:(int)value;
-- (id)initWithInt:(int)value lengthProportion:(CGFloat)lengthProportion;
-- (id)initWithInt:(int)value lengthProportion:(CGFloat)lengthProportion labelVisible:(BOOL)labelVisible;
-
-- (id)initWithFloat:(float)value;
-- (id)initWithFloat:(float)value lengthProportion:(CGFloat)lengthProportion;
-- (id)initWithFloat:(float)value lengthProportion:(CGFloat)lengthProportion labelVisible:(BOOL)labelVisible;
-
-+ (ScaleMarker *)markerWithInt:(int)value;
-+ (ScaleMarker *)markerWithInt:(int)value lengthProportion:(CGFloat)lengthProportion;
-+ (ScaleMarker *)markerWithInt:(int)value lengthProportion:(CGFloat)lengthProportion labelVisible:(BOOL)labelVisible;
-
-+ (ScaleMarker *)markerWithFloat:(float)value;
-+ (ScaleMarker *)markerWithFloat:(float)value lengthProportion:(CGFloat)lengthProportion;
-+ (ScaleMarker *)markerWithFloat:(float)value lengthProportion:(CGFloat)lengthProportion labelVisible:(BOOL)labelVisible;
+- (id)initWithFloat:(CGFloat)floatNumber frame:(CGRect)frame;
+- (id)initWithWhole:(NSInteger)whole numerator:(NSUInteger)numerator denominator:(NSUInteger)denominator frame:(CGRect)frame;
 
 @end
 
