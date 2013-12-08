@@ -24,7 +24,6 @@
 		A9EB0DD418372BD400E1BD77 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9EB0DB318372BD400E1BD77 /* UIKit.framework */; };
 		A9EB0DDC18372BD400E1BD77 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A9EB0DDA18372BD400E1BD77 /* InfoPlist.strings */; };
 		A9EB0DDE18372BD400E1BD77 /* SeamCalcTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A9EB0DDD18372BD400E1BD77 /* SeamCalcTests.m */; };
-		A9EB0DE91837A38800E1BD77 /* SeamCalcSliderDumbbell.m in Sources */ = {isa = PBXBuildFile; fileRef = A9EB0DE81837A38800E1BD77 /* SeamCalcSliderDumbbell.m */; };
 		A9EB0DEC1838C2CA00E1BD77 /* SeamCalcSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = A9EB0DEB1838C2CA00E1BD77 /* SeamCalcSlider.m */; };
 /* End PBXBuildFile section */
 
@@ -63,8 +62,6 @@
 		A9EB0DD918372BD400E1BD77 /* SeamCalcTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SeamCalcTests-Info.plist"; sourceTree = "<group>"; };
 		A9EB0DDB18372BD400E1BD77 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		A9EB0DDD18372BD400E1BD77 /* SeamCalcTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SeamCalcTests.m; sourceTree = "<group>"; };
-		A9EB0DE71837A38800E1BD77 /* SeamCalcSliderDumbbell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SeamCalcSliderDumbbell.h; sourceTree = "<group>"; };
-		A9EB0DE81837A38800E1BD77 /* SeamCalcSliderDumbbell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SeamCalcSliderDumbbell.m; sourceTree = "<group>"; };
 		A9EB0DEA1838C2CA00E1BD77 /* SeamCalcSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SeamCalcSlider.h; sourceTree = "<group>"; };
 		A9EB0DEB1838C2CA00E1BD77 /* SeamCalcSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SeamCalcSlider.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -137,8 +134,6 @@
 				A988E2241853DEC800C09394 /* ScaleMarker.h */,
 				A988E2271853DF8600C09394 /* ScaleMarkerPrivate.h */,
 				A988E2251853DEC800C09394 /* ScaleMarker.m */,
-				A9EB0DE71837A38800E1BD77 /* SeamCalcSliderDumbbell.h */,
-				A9EB0DE81837A38800E1BD77 /* SeamCalcSliderDumbbell.m */,
 				A9EB0DC718372BD400E1BD77 /* ViewController.h */,
 				A9EB0DC818372BD400E1BD77 /* ViewController.m */,
 				A9EB0DCA18372BD400E1BD77 /* Images.xcassets */,
@@ -279,7 +274,6 @@
 				A988E2261853DEC800C09394 /* ScaleMarker.m in Sources */,
 				A9EB0DEC1838C2CA00E1BD77 /* SeamCalcSlider.m in Sources */,
 				A9EB0DBC18372BD400E1BD77 /* main.m in Sources */,
-				A9EB0DE91837A38800E1BD77 /* SeamCalcSliderDumbbell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

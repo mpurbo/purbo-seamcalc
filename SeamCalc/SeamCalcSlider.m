@@ -14,10 +14,23 @@
 
 @end
 
-@interface SeamCalcScale : UIView
+@interface SeamCalcScale : UIView {
+    // marker maximum height
+    CGFloat markerMaxHeight;
+    CGFloat handleSize;
+    
+    // slider main line is from half of handle diameter to frame width - half of handle diameter
+    // so that the handle circle can go all the way to the frame left.
+    CGFloat left;
+    CGFloat right;
+    CGFloat scaleWidth;
+}
 
 @property (nonatomic, weak) SeamCalcSlider *slider;
+@property (nonatomic, strong) NSArray *primaryScaleOffsets;
+@property (nonatomic, strong) NSArray *secondaryScaleOffsets;
 
+- (id)initWithSlider:(SeamCalcSlider *)slider frame:(CGRect)frame;
 - (ScaleMarker *)findMarkerClosestTo:(CGFloat)value;
 
 @end
@@ -57,17 +70,10 @@
     self = [super initWithFrame:frame];
     if (self) {
         
-        self.scale = [[SeamCalcScale alloc] initWithFrame:CGRectMake(0.0,
-                                                                     0.0,
-                                                                     self.frame.size.width,
-                                                                     self.frame.size.height)];
-        self.scale.slider = self;
-        
         self.handle = [[SeamCalcHandle alloc] initWithFrame:CGRectMake(0.0,
                                                                        self.frame.size.height/2.0 - handleSize/2.0,
                                                                        handleSize,
                                                                        handleSize)];
-        
         self.minValue = minValue;
         self.maxValue = maxValue;
         self.primaryScaleMarkers = primaryScaleMarkers;
@@ -79,6 +85,12 @@
         for (ScaleMarker *marker in self.secondaryScaleMarkers) {
             marker.primary = NO;
         }
+        
+        self.scale = [[SeamCalcScale alloc] initWithSlider:self
+                                                     frame:CGRectMake(0.0,
+                                                                      0.0,
+                                                                      self.frame.size.width,
+                                                                      self.frame.size.height)];
         
         [self addSubview:self.scale];
         [self addSubview:self.handle];
@@ -214,63 +226,112 @@
 
 @implementation SeamCalcScale
 
-- (id)initWithFrame:(CGRect)frame
+#define SC_GRAY_LEVEL 0.85
+#define SC_GRAY SC_GRAY_LEVEL, SC_GRAY_LEVEL, SC_GRAY_LEVEL, 1.0
+
+- (id)initWithSlider:(SeamCalcSlider *)slider frame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
     if (self) {
+        self.slider = slider;
         self.backgroundColor = [UIColor clearColor];
         self.userInteractionEnabled = NO;
+        self.primaryScaleOffsets = nil;
+        self.secondaryScaleOffsets = nil;
     }
     return self;
 }
 
-#define SC_GRAY_LEVEL 0.85
-#define SC_GRAY SC_GRAY_LEVEL, SC_GRAY_LEVEL, SC_GRAY_LEVEL, 1.0
+- (void)initValues
+{
+    NSLog(@"Initializing scale offset values & labels");
+    
+    // marker maximum height
+    markerMaxHeight = self.frame.size.height/2.0;
+    
+    handleSize = _slider.handle.frame.size.width;
+    
+    // slider main line is from half of handle diameter to frame width - half of handle diameter
+    // so that the handle circle can go all the way to the frame left.
+    left = handleSize/2.0;
+    right = self.frame.size.width - handleSize/2.0;
+    scaleWidth = right - left;
+    
+    // offsets for primary scale lines (upward)
+    //NSLog(@"== Drawing primary labels");
+    NSMutableArray *primaryScaleOffsets = [NSMutableArray array];
+    for (ScaleMarker *marker in _slider.primaryScaleMarkers) {
+        CGFloat labelSize = markerMaxHeight * marker.labelHeightProportion;
+        CGFloat x = left + (([marker.value floatValue] - _slider.minValue)/(_slider.maxValue - _slider.minValue)) * scaleWidth;
+        // min y is added by label height to make space for the label (if the label is visible)
+        CGFloat y = markerMaxHeight - (markerMaxHeight * marker.lengthProportion) + (marker.labelVisible ? labelSize : 0.0);
+        [primaryScaleOffsets addObject:[NSValue valueWithCGPoint:CGPointMake(x, y)]];
+        
+        // add label if visible
+        if (marker.labelVisible) {
+            //NSLog(@"   frame (%f, %f, %f, %f)", x - labelSize/2.0, y - labelSize, labelSize, labelSize);
+            [self addSubview:[[MixedNumberView alloc] initWithFloat:[marker.value floatValue]
+                                                              frame:CGRectMake(x - labelSize/2.0, y - labelSize, labelSize, labelSize)]];
+        }
+    }
+    self.primaryScaleOffsets = primaryScaleOffsets;
+    
+    // offsets for secondary scale lines (downward)
+    //NSLog(@"== Drawing secondary labels");
+    NSMutableArray *secondaryScaleOffsets = [NSMutableArray array];
+    for (ScaleMarker *marker in _slider.secondaryScaleMarkers) {
+        CGFloat labelSize = markerMaxHeight * marker.labelHeightProportion;
+        CGFloat primValue = _slider.convertToPrimary([marker.value floatValue]);
+        CGFloat x = left + ((primValue - _slider.minValue)/(_slider.maxValue - _slider.minValue)) * scaleWidth;
+        // max y is subtracted by label height to make space for the label (if the label is visible)
+        CGFloat y = markerMaxHeight + (markerMaxHeight * marker.lengthProportion) - (marker.labelVisible ? markerMaxHeight * marker.labelHeightProportion : 0.0);
+        [secondaryScaleOffsets addObject:[NSValue valueWithCGPoint:CGPointMake(x, y)]];
+        
+        // add label if visible
+        if (marker.labelVisible) {
+            //NSLog(@"   frame (%f, %f, %f, %f)", x - labelSize/2.0, y + labelSize, labelSize, labelSize);
+            [self addSubview:[[MixedNumberView alloc] initWithFloat:[marker.value floatValue]
+                                                              frame:CGRectMake(x - labelSize/2.0, y, labelSize, labelSize)]];
+        }
+    }
+    self.secondaryScaleOffsets = secondaryScaleOffsets;
+}
+
+- (void)drawScales:(NSArray *)scaleOffsets withContext:(CGContextRef)context lineWidth:(CGFloat)lineWidth
+{
+    for (NSValue *ptvalue in scaleOffsets) {
+        CGPoint pt = [ptvalue CGPointValue];
+        if (_slider.highlightCurrentMeasurement) {
+            CGFloat gray = [self grayLevelFor:pt.x inReferenceTo:_slider.handle.center.x maxDistance:(right - left)];
+            CGContextSetRGBStrokeColor(context, gray, gray, gray, 1.0);
+        }
+        CGFloat mainLineY = (self.frame.size.height/2.0) + lineWidth;
+        CGContextMoveToPoint(context, pt.x, mainLineY);
+        CGContextAddLineToPoint(context, pt.x, pt.y);
+        //NSLog(@"   Line drawn (%f, %f) - (%f, %f)", pt.x, mainLineY, pt.x, pt.y);
+        CGContextStrokePath(context);
+    }
+}
 
 - (void)drawRect:(CGRect)rect
 {
+    if (!self.primaryScaleOffsets) {
+        [self initValues];
+    }
+    
     CGContextRef context = UIGraphicsGetCurrentContext();
     
     // scale line width
     CGFloat lineWidth = 1.0;
     
-    CGFloat handleSize = _slider.handle.frame.size.width;
-    
-    // slider main line is from half of handle diameter to frame width - half of handle diameter
-    // so that the handle circle can go all the way to the frame left.
-    CGFloat left = handleSize/2.0;
-    CGFloat right = self.frame.size.width - handleSize/2.0;
-    CGFloat scaleWidth = right - left;
-    
     CGContextSetRGBStrokeColor(context, SC_GRAY);
     
-    // primary scale lines
-    for (ScaleMarker *marker in _slider.primaryScaleMarkers) {
-        CGFloat x = left + (([marker.value floatValue] - _slider.minValue)/(_slider.maxValue - _slider.minValue)) * scaleWidth;
-        // height is subtracted by label height to make space for the label.
-        CGFloat h = self.frame.size.height/2.0 - ((self.frame.size.height/2.0) * marker.lengthProportion);
-        if (_slider.highlightCurrentMeasurement) {
-            CGFloat gray = [self grayLevelFor:x inReferenceTo:_slider.handle.center.x maxDistance:(right - left)];
-            CGContextSetRGBStrokeColor(context, gray, gray, gray, 1.0);
-        }
-        CGContextMoveToPoint(context, x, (self.frame.size.height/2.0) + lineWidth);
-        CGContextAddLineToPoint(context, x, h);
-        CGContextStrokePath(context);
-    }
-    
-    // secondary scale lines
-    for (ScaleMarker *marker in _slider.secondaryScaleMarkers) {
-        CGFloat primValue = _slider.convertToPrimary([marker.value floatValue]);
-        CGFloat x = left + ((primValue - _slider.minValue)/(_slider.maxValue - _slider.minValue)) * scaleWidth;
-        CGFloat h = self.frame.size.height/2.0 + ((self.frame.size.height/2.0) * marker.lengthProportion);
-        if (_slider.highlightCurrentMeasurement) {
-            CGFloat gray = [self grayLevelFor:x inReferenceTo:_slider.handle.center.x maxDistance:(right - left)];
-            CGContextSetRGBStrokeColor(context, gray, gray, gray, 1.0);
-        }
-        CGContextMoveToPoint(context, x, (self.frame.size.height/2.0));
-        CGContextAddLineToPoint(context, x, h);
-        CGContextStrokePath(context);
-    }
+    // primary scale lines (upward)
+    //NSLog(@"== Drawing primary scale lines");
+    [self drawScales:self.primaryScaleOffsets withContext:context lineWidth:lineWidth];
+    // secondary scale lines (downward)
+    //NSLog(@"== Drawing secondary scale lines");
+    [self drawScales:self.secondaryScaleOffsets withContext:context lineWidth:lineWidth];
     
     // main line
     
@@ -401,7 +462,7 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        
+        self.backgroundColor = [UIColor clearColor];
         self.whole = floor(floatNumber);
         
         // calculating float number to fractional number with int components: whole numerator/denominator
@@ -453,8 +514,8 @@
         self.denominator = denom;
         self.numerator = num;
         
-        NSLog(@"%d %d/%d", self.whole, self.numerator, self.denominator);
-        
+        //NSLog(@"%d %d/%d", self.whole, self.numerator, self.denominator);
+        [self initLabelsWithFrame:frame];
     }
     return self;
 }
@@ -463,22 +524,106 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
+        self.backgroundColor = [UIColor clearColor];
         self.whole = whole;
         self.numerator = numerator;
         self.denominator = denominator;
+        [self initLabelsWithFrame:frame];
     }
     return self;
 }
 
+- (void)initLabelsWithFrame:(CGRect)frame
+{
+    if (self.whole > 0 && self.numerator == 0) {
+        // whole number only
+        CGRect rectWhole = CGRectMake(0.0, 0.0, frame.size.width, frame.size.height);
+        NSString *sWhole = [NSString stringWithFormat:@"%d", self.whole];
+        UILabel *labelWhole = [[UILabel alloc] initWithFrame:rectWhole];
+        labelWhole.font = [self adjustFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:20.0]
+                               toFitString:sWhole inRect:rectWhole];
+        labelWhole.backgroundColor = [UIColor clearColor];
+        labelWhole.textColor = [UIColor blackColor];
+        labelWhole.textAlignment = NSTextAlignmentCenter;
+        labelWhole.text = sWhole;
+        [self addSubview:labelWhole];
+    } else if (self.whole == 0 && self.numerator > 0) {
+        // fractional part only
+        CGRect rectNum = CGRectMake(0.0, 0.0, frame.size.width/2.0, frame.size.height/2.0);
+        NSString *sNum = [NSString stringWithFormat:@"%d", self.numerator];
+        UILabel *labelNum = [[UILabel alloc] initWithFrame:rectNum];
+        labelNum.font = [self adjustFont:[UIFont fontWithName:@"HelveticaNeue-Thin" size:17.0]
+                             toFitString:sNum inRect:rectNum];
+        labelNum.backgroundColor = [UIColor clearColor];
+        labelNum.textColor = [UIColor blackColor];
+        labelNum.textAlignment = NSTextAlignmentCenter;
+        labelNum.text = sNum;
+        [self addSubview:labelNum];
+        
+        CGRect rectDenom = CGRectMake(frame.size.width/2.0, frame.size.height/2.0, frame.size.width/2.0, frame.size.height/2.0);
+        NSString *sDenom = [NSString stringWithFormat:@"%d", self.denominator];
+        UILabel *labelDenom = [[UILabel alloc] initWithFrame:rectDenom];
+        labelDenom.font = [self adjustFont:[UIFont fontWithName:@"HelveticaNeue-Thin" size:17.0]
+                               toFitString:sDenom inRect:rectDenom];
+        labelDenom.backgroundColor = [UIColor clearColor];
+        labelDenom.textColor = [UIColor blackColor];
+        labelDenom.textAlignment = NSTextAlignmentCenter;
+        labelDenom.text = sDenom;
+        [self addSubview:labelDenom];
+    } else if (self.whole > 0 && self.numerator > 0) {
+        // half of the frame is for whole number, another half for num/denom
+        CGRect rectWhole = CGRectMake(0.0, 0.0, frame.size.width/2.0, frame.size.height);
+        NSString *sWhole = [NSString stringWithFormat:@"%d", self.whole];
+        UILabel *labelWhole = [[UILabel alloc] initWithFrame:rectWhole];
+        labelWhole.font = [self adjustFont:[UIFont fontWithName:@"HelveticaNeue-Thin" size:20.0]
+                               toFitString:sWhole inRect:rectWhole];
+        labelWhole.backgroundColor = [UIColor clearColor];
+        labelWhole.textColor = [UIColor blackColor];
+        labelWhole.textAlignment = NSTextAlignmentCenter;
+        labelWhole.text = sWhole;
+        [self addSubview:labelWhole];
+        
+        CGRect rectNum = CGRectMake(frame.size.width/2.0, 0.0, frame.size.width/4.0, frame.size.height/4.0);
+        NSString *sNum = [NSString stringWithFormat:@"%d", self.numerator];
+        UILabel *labelNum = [[UILabel alloc] initWithFrame:rectNum];
+        labelNum.font = [self adjustFont:[UIFont fontWithName:@"HelveticaNeue-Thin" size:14.0]
+                             toFitString:sNum inRect:rectNum];
+        labelNum.backgroundColor = [UIColor clearColor];
+        labelNum.textColor = [UIColor blackColor];
+        labelNum.textAlignment = NSTextAlignmentCenter;
+        labelNum.text = sNum;
+        [self addSubview:labelNum];
+        
+        CGRect rectDenom = CGRectMake(frame.size.width*0.75, frame.size.height/2.0, frame.size.width/4.0, frame.size.height/4.0);
+        NSString *sDenom = [NSString stringWithFormat:@"%d", self.denominator];
+        UILabel *labelDenom = [[UILabel alloc] initWithFrame:rectDenom];
+        labelDenom.font = [self adjustFont:[UIFont fontWithName:@"HelveticaNeue-Light" size:14.0]
+                               toFitString:sDenom inRect:rectDenom];
+        labelDenom.backgroundColor = [UIColor clearColor];
+        labelDenom.textColor = [UIColor blackColor];
+        labelDenom.textAlignment = NSTextAlignmentCenter;
+        labelDenom.text = sDenom;
+        [self addSubview:labelDenom];
+    }
+    
+}
+
+- (UIFont *)adjustFont:(UIFont *)font toFitString:(NSString *)string inRect:(CGRect)rect
+{
+    UIFont *ret = font;
+    CGSize size = [string sizeWithAttributes:@{NSFontAttributeName:ret}];
+    while(size.width > rect.size.width){
+        ret = [UIFont fontWithDescriptor:ret.fontDescriptor size:ret.pointSize - 1];
+        size = [string sizeWithAttributes:@{NSFontAttributeName:ret}];
+    }
+    return ret;
+}
+
+/*
 - (void)drawRect:(CGRect)rect
 {
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    CGPathRef path = CGPathCreateWithRect(rect, NULL);
-    [[UIColor redColor] setFill];
-    [[UIColor greenColor] setStroke];
-    CGContextAddPath(context, path);
-    CGContextDrawPath(context, kCGPathFillStroke);
-    CGPathRelease(path);
+    [super drawRect:rect];
 }
+*/
 
 @end
