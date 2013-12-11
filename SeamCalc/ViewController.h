@@ -7,7 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SeamCalcSlider.h"
 
 @interface ViewController : UIViewController
+
+@property (nonatomic, strong) IBOutlet SeamCalcSlider *slider;
 
 @end

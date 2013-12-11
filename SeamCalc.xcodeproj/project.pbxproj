@@ -10,6 +10,7 @@
 		A939A223184CD0D100C50BCE /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A939A222184CD0D000C50BCE /* CoreText.framework */; };
 		A988E2261853DEC800C09394 /* ScaleMarker.m in Sources */ = {isa = PBXBuildFile; fileRef = A988E2251853DEC800C09394 /* ScaleMarker.m */; };
 		A996E2701858808E00843FFF /* MixedNumberView.m in Sources */ = {isa = PBXBuildFile; fileRef = A996E26F1858808E00843FFF /* MixedNumberView.m */; };
+		A996E27218589B6A00843FFF /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A996E27118589B6A00843FFF /* QuartzCore.framework */; };
 		A9EB0DB018372BD400E1BD77 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9EB0DAF18372BD400E1BD77 /* Foundation.framework */; };
 		A9EB0DB218372BD400E1BD77 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9EB0DB118372BD400E1BD77 /* CoreGraphics.framework */; };
 		A9EB0DB418372BD400E1BD77 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9EB0DB318372BD400E1BD77 /* UIKit.framework */; };
@@ -45,6 +46,7 @@
 		A988E2271853DF8600C09394 /* ScaleMarkerPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScaleMarkerPrivate.h; sourceTree = "<group>"; };
 		A996E26E1858808E00843FFF /* MixedNumberView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MixedNumberView.h; sourceTree = "<group>"; };
 		A996E26F1858808E00843FFF /* MixedNumberView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MixedNumberView.m; sourceTree = "<group>"; };
+		A996E27118589B6A00843FFF /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		A9EB0DAC18372BD400E1BD77 /* SeamCalc.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SeamCalc.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A9EB0DAF18372BD400E1BD77 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		A9EB0DB118372BD400E1BD77 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -74,10 +76,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A9EB0DB018372BD400E1BD77 /* Foundation.framework in Frameworks */,
 				A9EB0DB218372BD400E1BD77 /* CoreGraphics.framework in Frameworks */,
 				A939A223184CD0D100C50BCE /* CoreText.framework in Frameworks */,
+				A996E27218589B6A00843FFF /* QuartzCore.framework in Frameworks */,
 				A9EB0DB418372BD400E1BD77 /* UIKit.framework in Frameworks */,
-				A9EB0DB018372BD400E1BD77 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -94,6 +97,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A996E27318589BB300843FFF /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				A9EB0DEA1838C2CA00E1BD77 /* SeamCalcSlider.h */,
+				A9EB0DEB1838C2CA00E1BD77 /* SeamCalcSlider.m */,
+				A988E2241853DEC800C09394 /* ScaleMarker.h */,
+				A988E2271853DF8600C09394 /* ScaleMarkerPrivate.h */,
+				A988E2251853DEC800C09394 /* ScaleMarker.m */,
+				A996E26E1858808E00843FFF /* MixedNumberView.h */,
+				A996E26F1858808E00843FFF /* MixedNumberView.m */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
 		A9EB0DA318372BD400E1BD77 = {
 			isa = PBXGroup;
 			children = (
@@ -116,6 +133,7 @@
 		A9EB0DAE18372BD400E1BD77 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A996E27118589B6A00843FFF /* QuartzCore.framework */,
 				A939A222184CD0D000C50BCE /* CoreText.framework */,
 				A9EB0DAF18372BD400E1BD77 /* Foundation.framework */,
 				A9EB0DB118372BD400E1BD77 /* CoreGraphics.framework */,
@@ -128,19 +146,13 @@
 		A9EB0DB518372BD400E1BD77 /* SeamCalc */ = {
 			isa = PBXGroup;
 			children = (
-				A9EB0DBE18372BD400E1BD77 /* AppDelegate.h */,
-				A9EB0DBF18372BD400E1BD77 /* AppDelegate.m */,
 				A9EB0DC118372BD400E1BD77 /* Main_iPhone.storyboard */,
 				A9EB0DC418372BD400E1BD77 /* Main_iPad.storyboard */,
-				A9EB0DEA1838C2CA00E1BD77 /* SeamCalcSlider.h */,
-				A9EB0DEB1838C2CA00E1BD77 /* SeamCalcSlider.m */,
-				A988E2241853DEC800C09394 /* ScaleMarker.h */,
-				A988E2271853DF8600C09394 /* ScaleMarkerPrivate.h */,
-				A988E2251853DEC800C09394 /* ScaleMarker.m */,
-				A996E26E1858808E00843FFF /* MixedNumberView.h */,
-				A996E26F1858808E00843FFF /* MixedNumberView.m */,
+				A9EB0DBE18372BD400E1BD77 /* AppDelegate.h */,
+				A9EB0DBF18372BD400E1BD77 /* AppDelegate.m */,
 				A9EB0DC718372BD400E1BD77 /* ViewController.h */,
 				A9EB0DC818372BD400E1BD77 /* ViewController.m */,
+				A996E27318589BB300843FFF /* Views */,
 				A9EB0DCA18372BD400E1BD77 /* Images.xcassets */,
 				A9EB0DB618372BD400E1BD77 /* Supporting Files */,
 			);

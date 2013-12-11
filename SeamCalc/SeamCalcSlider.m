@@ -52,58 +52,29 @@
 
 @interface SeamCalcSlider()
 
-@property (nonatomic, readwrite, assign) CGFloat minValue;
-@property (nonatomic, readwrite, assign) CGFloat maxValue;
-
-@property (nonatomic, readwrite, strong) NSArray *primaryScaleMarkers;
-@property (nonatomic, readwrite, strong) NSArray *secondaryScaleMarkers;
-
-@property (nonatomic, readwrite, copy) ConverterBlock convertToPrimary;
-@property (nonatomic, readwrite, copy) ConverterBlock convertToSecondary;
-
 @end
 
 @implementation SeamCalcSlider
 
-- (id)initWithFrame:(CGRect)frame
-         handleSize:(CGFloat)handleSize
-           minValue:(CGFloat)minValue
-           maxValue:(CGFloat)maxValue primaryScaleMarkers:(NSArray *)primaryScaleMarkers secondaryScaleMarkers:(NSArray *)secondaryScaleMarkers
-   convertToPrimary:(ConverterBlock)convertToPrimary
- convertToSecondary:(ConverterBlock)convertToSecondary
+- (void)initComponents
 {
-    self = [super initWithFrame:frame];
-    if (self) {
-        
-        self.handle = [[SeamCalcHandle alloc] initWithFrame:CGRectMake(0.0,
-                                                                       self.frame.size.height/2.0 - handleSize/2.0,
-                                                                       handleSize,
-                                                                       handleSize)];
-        self.minValue = minValue;
-        self.maxValue = maxValue;
-        self.primaryScaleMarkers = primaryScaleMarkers;
-        self.secondaryScaleMarkers = secondaryScaleMarkers;
-        
-        for (ScaleMarker *marker in self.primaryScaleMarkers) {
-            marker.primary = YES;
-        }
-        for (ScaleMarker *marker in self.secondaryScaleMarkers) {
-            marker.primary = NO;
-        }
-        
-        self.scale = [[SeamCalcScale alloc] initWithSlider:self
-                                                     frame:CGRectMake(0.0,
-                                                                      0.0,
-                                                                      self.frame.size.width,
-                                                                      self.frame.size.height)];
-        
-        [self addSubview:self.scale];
-        [self addSubview:self.handle];
-        
-        self.convertToPrimary = convertToPrimary;
-        self.convertToSecondary = convertToSecondary;
-    }
-    return self;
+    self.handle = [[SeamCalcHandle alloc] initWithFrame:CGRectMake(0.0,
+                                                                   self.frame.size.height/2.0 - self.handleSize/2.0,
+                                                                   self.handleSize,
+                                                                   self.handleSize)];
+    self.scale = [[SeamCalcScale alloc] initWithSlider:self
+                                                 frame:CGRectMake(0.0,
+                                                                  0.0,
+                                                                  self.frame.size.width,
+                                                                  self.frame.size.height)];
+    
+    [self addSubview:self.scale];
+    [self addSubview:self.handle];
+}
+
+- (void)awakeFromNib
+{
+    [self initComponents];
 }
 
 - (BOOL)beginTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event

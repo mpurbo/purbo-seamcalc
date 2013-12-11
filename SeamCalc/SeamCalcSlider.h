@@ -13,23 +13,26 @@ typedef CGFloat (^ConverterBlock)(CGFloat value);
 
 @interface SeamCalcSlider : UIControl
 
+@property (nonatomic, assign) CGFloat handleSize;
 @property (nonatomic, assign) CGFloat value;
 @property (nonatomic, assign) BOOL highlightCurrentMeasurement;
 
-@property (nonatomic, readonly, assign) CGFloat minValue;
-@property (nonatomic, readonly, assign) CGFloat maxValue;
+@property (nonatomic, assign) CGFloat minValue;
+@property (nonatomic, assign) CGFloat maxValue;
 
-@property (nonatomic, readonly, strong) NSArray *primaryScaleMarkers;
-@property (nonatomic, readonly, strong) NSArray *secondaryScaleMarkers;
+@property (nonatomic, strong) NSArray *primaryScaleMarkers;
+@property (nonatomic, strong) NSArray *secondaryScaleMarkers;
 
-@property (nonatomic, readonly, copy) ConverterBlock convertToPrimary;
-@property (nonatomic, readonly, copy) ConverterBlock convertToSecondary;
+@property (nonatomic, copy) ConverterBlock convertToPrimary;
+@property (nonatomic, copy) ConverterBlock convertToSecondary;
 
+/*
 - (id)initWithFrame:(CGRect)frame
          handleSize:(CGFloat)handleSize
            minValue:(CGFloat)minValue
            maxValue:(CGFloat)maxValue primaryScaleMarkers:(NSArray *)primaryScaleMarkers secondaryScaleMarkers:(NSArray *)secondaryScaleMarkers
    convertToPrimary:(ConverterBlock)convertToPrimary
  convertToSecondary:(ConverterBlock)convertToSecondary;
+*/
 
 @end
