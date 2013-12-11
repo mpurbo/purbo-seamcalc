@@ -11,17 +11,6 @@
 
 typedef CGFloat (^ConverterBlock)(CGFloat value);
 
-@interface MixedNumberView : UIView
-
-@property (nonatomic, assign) NSInteger whole;
-@property (nonatomic, assign) NSUInteger numerator;
-@property (nonatomic, assign) NSUInteger denominator;
-
-- (id)initWithFloat:(CGFloat)floatNumber frame:(CGRect)frame;
-- (id)initWithWhole:(NSInteger)whole numerator:(NSUInteger)numerator denominator:(NSUInteger)denominator frame:(CGRect)frame;
-
-@end
-
 @interface SeamCalcSlider : UIControl
 
 @property (nonatomic, assign) CGFloat value;
