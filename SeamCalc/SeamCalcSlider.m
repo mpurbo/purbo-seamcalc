@@ -28,8 +28,12 @@
 }
 
 @property (nonatomic, weak) SeamCalcSlider *slider;
+
 @property (nonatomic, strong) NSArray *primaryScaleOffsets;
 @property (nonatomic, strong) NSArray *secondaryScaleOffsets;
+
+@property (nonatomic, strong) NSArray *primaryScaleLabels;
+@property (nonatomic, strong) NSArray *secondaryScaleLabels;
 
 - (id)initWithSlider:(SeamCalcSlider *)slider frame:(CGRect)frame;
 - (ScaleMarker *)findMarkerClosestTo:(CGFloat)value;
@@ -100,20 +104,6 @@
         self.convertToSecondary = convertToSecondary;
     }
     return self;
-}
-
--(void)layoutSubviews
-{
-    /*
-     // Set the initial state
-     _minThumb.center = CGPointMake([self xForValue:selectedMinimumValue], self.center.y);
-     
-     _maxThumb.center = CGPointMake([self xForValue:selectedMaximumValue], self.center.y);
-     
-     
-     NSLog(@"Tapable size %f", _minThumb.bounds.size.width);
-     [self updateTrackHighlight];
-     */
 }
 
 - (BOOL)beginTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event
@@ -245,7 +235,7 @@
 
 - (void)initValues
 {
-    NSLog(@"Initializing scale offset values & labels");
+    //NSLog(@"Initializing scale offset values & labels");
     
     // marker maximum height
     markerMaxHeight = self.frame.size.height/2.0;
@@ -261,6 +251,7 @@
     // offsets for primary scale lines (upward)
     //NSLog(@"== Drawing primary labels");
     NSMutableArray *primaryScaleOffsets = [NSMutableArray array];
+    NSMutableArray *primaryScaleLabels = [NSMutableArray array];
     for (ScaleMarker *marker in _slider.primaryScaleMarkers) {
         CGFloat labelSize = markerMaxHeight * marker.labelHeightProportion;
         CGFloat x = left + (([marker.value floatValue] - _slider.minValue)/(_slider.maxValue - _slider.minValue)) * scaleWidth;
@@ -271,15 +262,21 @@
         // add label if visible
         if (marker.labelVisible) {
             //NSLog(@"   frame (%f, %f, %f, %f)", x - labelSize/2.0, y - labelSize, labelSize, labelSize);
-            [self addSubview:[[MixedNumberView alloc] initWithFloat:[marker.value floatValue]
-                                                              frame:CGRectMake(x - labelSize/2.0, y - labelSize, labelSize, labelSize)]];
+            MixedNumberView *label = [[MixedNumberView alloc] initWithFloat:[marker.value floatValue]
+                                                                      frame:CGRectMake(x - labelSize/2.0, y - labelSize, labelSize, labelSize)];
+            [self addSubview:label];
+            [primaryScaleLabels addObject:label];
+        } else {
+            [primaryScaleLabels addObject:[NSNull null]];
         }
     }
     self.primaryScaleOffsets = primaryScaleOffsets;
+    self.primaryScaleLabels = primaryScaleLabels;
     
     // offsets for secondary scale lines (downward)
     //NSLog(@"== Drawing secondary labels");
     NSMutableArray *secondaryScaleOffsets = [NSMutableArray array];
+    NSMutableArray *secondaryScaleLabels = [NSMutableArray array];
     for (ScaleMarker *marker in _slider.secondaryScaleMarkers) {
         CGFloat labelSize = markerMaxHeight * marker.labelHeightProportion;
         CGFloat primValue = _slider.convertToPrimary([marker.value floatValue]);
@@ -287,30 +284,46 @@
         // max y is subtracted by label height to make space for the label (if the label is visible)
         CGFloat y = markerMaxHeight + (markerMaxHeight * marker.lengthProportion) - (marker.labelVisible ? markerMaxHeight * marker.labelHeightProportion : 0.0);
         [secondaryScaleOffsets addObject:[NSValue valueWithCGPoint:CGPointMake(x, y)]];
-        
         // add label if visible
         if (marker.labelVisible) {
             //NSLog(@"   frame (%f, %f, %f, %f)", x - labelSize/2.0, y + labelSize, labelSize, labelSize);
-            [self addSubview:[[MixedNumberView alloc] initWithFloat:[marker.value floatValue]
-                                                              frame:CGRectMake(x - labelSize/2.0, y, labelSize, labelSize)]];
+            MixedNumberView *label = [[MixedNumberView alloc] initWithFloat:[marker.value floatValue]
+                                                                      frame:CGRectMake(x - labelSize/2.0, y, labelSize, labelSize)];
+            [self addSubview:label];
+            [secondaryScaleLabels addObject:label];
+        } else {
+            [secondaryScaleLabels addObject:[NSNull null]];
         }
     }
     self.secondaryScaleOffsets = secondaryScaleOffsets;
+    self.secondaryScaleLabels = secondaryScaleLabels;
 }
 
-- (void)drawScales:(NSArray *)scaleOffsets withContext:(CGContextRef)context lineWidth:(CGFloat)lineWidth
+- (void)drawScales:(NSArray *)scaleOffsets
+            labels:(NSArray *)labels
+       withContext:(CGContextRef)context
+         lineWidth:(CGFloat)lineWidth
 {
+    int i = 0;
     for (NSValue *ptvalue in scaleOffsets) {
         CGPoint pt = [ptvalue CGPointValue];
         if (_slider.highlightCurrentMeasurement) {
             CGFloat gray = [self grayLevelFor:pt.x inReferenceTo:_slider.handle.center.x maxDistance:(right - left)];
             CGContextSetRGBStrokeColor(context, gray, gray, gray, 1.0);
+            id label = [labels objectAtIndex:i];
+            if ([label class] == [MixedNumberView class]) {
+                MixedNumberView *mnv = (MixedNumberView *)label;
+                [mnv setColor:[UIColor colorWithRed:gray green:gray blue:gray alpha:1.0]];
+                [mnv setNeedsLayout];
+                [mnv setNeedsDisplay];
+            }
         }
         CGFloat mainLineY = (self.frame.size.height/2.0) + lineWidth;
         CGContextMoveToPoint(context, pt.x, mainLineY);
         CGContextAddLineToPoint(context, pt.x, pt.y);
         //NSLog(@"   Line drawn (%f, %f) - (%f, %f)", pt.x, mainLineY, pt.x, pt.y);
         CGContextStrokePath(context);
+        i++;
     }
 }
 
@@ -329,10 +342,10 @@
     
     // primary scale lines (upward)
     //NSLog(@"== Drawing primary scale lines");
-    [self drawScales:self.primaryScaleOffsets withContext:context lineWidth:lineWidth];
+    [self drawScales:self.primaryScaleOffsets labels:self.primaryScaleLabels withContext:context lineWidth:lineWidth];
     // secondary scale lines (downward)
     //NSLog(@"== Drawing secondary scale lines");
-    [self drawScales:self.secondaryScaleOffsets withContext:context lineWidth:lineWidth];
+    [self drawScales:self.secondaryScaleOffsets labels:self.secondaryScaleLabels withContext:context lineWidth:lineWidth];
     
     // main line
     

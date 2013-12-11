@@ -14,6 +14,8 @@
 @property (nonatomic, strong, readwrite) UILabel *labelNumerator;
 @property (nonatomic, strong, readwrite) UILabel *labelDenominator;
 
+@property (nonatomic, strong) UIColor *currentColor;
+
 @end
 
 @implementation MixedNumberView
@@ -91,6 +93,20 @@
         [self initLabelsWithFrame:frame];
     }
     return self;
+}
+
+- (void)setColor:(UIColor *)color
+{
+    if (self.labelWhole) {
+        self.labelWhole.textColor = color;
+    }
+    if (self.labelNumerator) {
+        self.labelNumerator.textColor = color;
+    }
+    if (self.labelDenominator) {
+        self.labelDenominator.textColor = color;
+    }
+    self.currentColor = color;
 }
 
 - (void)initLabelsWithFrame:(CGRect)frame
@@ -177,7 +193,11 @@
     if (self.whole == 0 && self.numerator > 0) {
         // fractional part only
         CGContextSetLineWidth(context, 0.8);
-        CGContextSetRGBStrokeColor(context, 0.0, 0.0, 0.0, 1.0);
+        if (self.currentColor) {
+            CGContextSetStrokeColorWithColor(context, self.currentColor.CGColor);
+        } else {
+            CGContextSetRGBStrokeColor(context, 0.0, 0.0, 0.0, 1.0);
+        }
         CGContextBeginPath(context);
         CGFloat offsetX = self.bounds.size.width * 0.2;
         CGFloat offsetY = self.bounds.size.height * 0.1;
@@ -189,7 +209,11 @@
         CGFloat fractWidth = self.bounds.size.width * 0.6;
         CGFloat fractLeft = self.bounds.size.width - fractWidth;
         CGContextSetLineWidth(context, 0.8);
-        CGContextSetRGBStrokeColor(context, 0.0, 0.0, 0.0, 1.0);
+        if (self.currentColor) {
+            CGContextSetStrokeColorWithColor(context, self.currentColor.CGColor);
+        } else {
+            CGContextSetRGBStrokeColor(context, 0.0, 0.0, 0.0, 1.0);
+        }
         CGContextBeginPath(context);
         CGFloat offsetX = fractWidth * 0.25;
         CGFloat offsetY = self.bounds.size.height * 0.25;

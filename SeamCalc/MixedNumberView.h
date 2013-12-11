@@ -21,4 +21,6 @@
 - (id)initWithFloat:(CGFloat)floatNumber frame:(CGRect)frame;
 - (id)initWithWhole:(NSInteger)whole numerator:(NSUInteger)numerator denominator:(NSUInteger)denominator frame:(CGRect)frame;
 
+- (void)setColor:(UIColor *)color;
+
 @end
