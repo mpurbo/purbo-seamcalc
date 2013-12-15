@@ -11,6 +11,13 @@
 
 typedef CGFloat (^ConverterBlock)(CGFloat value);
 
+@interface SeamCalcScale : UIView
+
+- (ScaleMarker *)findMarkerClosestTo:(CGFloat)value;
+- (ScaleMarker *)findMarkerClosestTo:(CGFloat)value inMarkers:(NSArray *)markers;
+
+@end
+
 @interface SeamCalcSlider : UIControl
 
 @property (nonatomic, assign) CGFloat handleSize;
@@ -26,6 +33,8 @@ typedef CGFloat (^ConverterBlock)(CGFloat value);
 @property (nonatomic, copy) ConverterBlock convertToPrimary;
 @property (nonatomic, copy) ConverterBlock convertToSecondary;
 
+@property (nonatomic, strong) SeamCalcScale *scale;
+
 /*
 - (id)initWithFrame:(CGRect)frame
          handleSize:(CGFloat)handleSize
@@ -34,5 +43,8 @@ typedef CGFloat (^ConverterBlock)(CGFloat value);
    convertToPrimary:(ConverterBlock)convertToPrimary
  convertToSecondary:(ConverterBlock)convertToSecondary;
 */
+
+- (CGFloat)xToValue:(CGFloat)x;
+- (CGFloat)valueToX:(CGFloat)value;
 
 @end

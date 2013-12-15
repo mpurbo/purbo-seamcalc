@@ -15,7 +15,7 @@
 
 @end
 
-@interface SeamCalcScale : UIView {
+@interface SeamCalcScale() {
     // marker maximum height
     CGFloat markerMaxHeight;
     CGFloat handleSize;
@@ -36,7 +36,10 @@
 @property (nonatomic, strong) NSArray *secondaryScaleLabels;
 
 - (id)initWithSlider:(SeamCalcSlider *)slider frame:(CGRect)frame;
-- (ScaleMarker *)findMarkerClosestTo:(CGFloat)value;
+
+@end
+
+@interface SeamCalcAnimatedMarker : UIView
 
 @end
 
@@ -46,7 +49,6 @@
 }
 
 @property (nonatomic, strong) SeamCalcHandle *handle;
-@property (nonatomic, strong) SeamCalcScale *scale;
 
 @end
 
@@ -75,6 +77,15 @@
 - (void)awakeFromNib
 {
     [self initComponents];
+}
+
+- (void)setPrimaryScaleMarkers:(NSArray *)primaryScaleMarkers
+{
+    _primaryScaleMarkers = primaryScaleMarkers;
+    
+    for (ScaleMarker *marker in _primaryScaleMarkers) {
+        marker.primary = YES;
+    }
 }
 
 - (BOOL)beginTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event
@@ -119,7 +130,6 @@
         
         [self setNeedsLayout];
         [self.scale setNeedsDisplay];
-        [self sendActionsForControlEvents:UIControlEventValueChanged];
     }
     
     return YES;
@@ -437,6 +447,15 @@
     }
     
     return minMarker;
+}
+
+@end
+
+@implementation SeamCalcAnimatedMarker
+
+- (void)drawRect:(CGRect)rect
+{
+    
 }
 
 @end

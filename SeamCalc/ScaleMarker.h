@@ -14,6 +14,7 @@
 @property (nonatomic, readonly, assign) CGFloat lengthProportion;
 @property (nonatomic, readonly, assign) CGFloat labelHeightProportion;
 @property (nonatomic, readonly, assign) BOOL labelVisible;
+@property (nonatomic, readonly, assign) BOOL primary;
 
 - (id)initWithInt:(int)value;
 - (id)initWithInt:(int)value lengthProportion:(CGFloat)lengthProportion;
