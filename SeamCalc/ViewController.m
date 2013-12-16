@@ -187,7 +187,8 @@
     label.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:12];
     label.textColor = [UIColor whiteColor];
     label.textAlignment = NSTextAlignmentCenter;
-    label.text = @"1.6";
+    CGFloat value = marker.primary ? _slider.convertToSecondary([marker.value floatValue]) : _slider.convertToPrimary([marker.value floatValue]);
+    label.text = [NSString stringWithFormat:@"%0.1f", value];
     
     CABasicAnimation *colorAnimation = [CABasicAnimation animationWithKeyPath:@"fillColor"];
     colorAnimation.fromValue = (__bridge id)[UIColor colorWithRed:0 green:0 blue:0 alpha:0].CGColor;
