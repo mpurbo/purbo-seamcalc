@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A90EBFC018840CDF00915512 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A90EBFBF18840CDF00915512 /* SettingsViewController.m */; };
 		A939A223184CD0D100C50BCE /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A939A222184CD0D000C50BCE /* CoreText.framework */; };
 		A988E2261853DEC800C09394 /* ScaleMarker.m in Sources */ = {isa = PBXBuildFile; fileRef = A988E2251853DEC800C09394 /* ScaleMarker.m */; };
 		A996E2701858808E00843FFF /* MixedNumberView.m in Sources */ = {isa = PBXBuildFile; fileRef = A996E26F1858808E00843FFF /* MixedNumberView.m */; };
@@ -40,6 +41,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		A90EBFBE18840CDF00915512 /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
+		A90EBFBF18840CDF00915512 /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
 		A939A222184CD0D000C50BCE /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		A988E2241853DEC800C09394 /* ScaleMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScaleMarker.h; sourceTree = "<group>"; };
 		A988E2251853DEC800C09394 /* ScaleMarker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScaleMarker.m; sourceTree = "<group>"; };
@@ -152,6 +155,8 @@
 				A9EB0DBF18372BD400E1BD77 /* AppDelegate.m */,
 				A9EB0DC718372BD400E1BD77 /* ViewController.h */,
 				A9EB0DC818372BD400E1BD77 /* ViewController.m */,
+				A90EBFBE18840CDF00915512 /* SettingsViewController.h */,
+				A90EBFBF18840CDF00915512 /* SettingsViewController.m */,
 				A996E27318589BB300843FFF /* Views */,
 				A9EB0DCA18372BD400E1BD77 /* Images.xcassets */,
 				A9EB0DB618372BD400E1BD77 /* Supporting Files */,
@@ -292,6 +297,7 @@
 				A996E2701858808E00843FFF /* MixedNumberView.m in Sources */,
 				A9EB0DEC1838C2CA00E1BD77 /* SeamCalcSlider.m in Sources */,
 				A9EB0DBC18372BD400E1BD77 /* main.m in Sources */,
+				A90EBFC018840CDF00915512 /* SettingsViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

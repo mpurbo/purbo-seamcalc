@@ -58,9 +58,19 @@
     _slider.convertToSecondary = ^CGFloat(CGFloat value) {
         return value * 0.0393700787;
     };
+    _slider.primaryFormatter = ^NSString *(CGFloat value) {
+        return [NSString stringWithFormat:@"%d", (int)roundf(value)];
+    };
     
     [_slider addTarget:self action:@selector(sliderValueChanged:) forControlEvents:UIControlEventValueChanged];
     
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    self.navigationController.navigationBarHidden = YES;
 }
 
 - (void)didReceiveMemoryWarning
@@ -138,10 +148,12 @@
     [path moveToPoint:start];
     [path addLineToPoint:end];
     
+    CGColorRef color = [UIColor colorWithRed:0.16 green:0.5 blue:0.725 alpha:0.9].CGColor;
+    
     self.layerPopupLine = [CAShapeLayer layer];
     self.layerPopupLine.frame = self.view.bounds;
     self.layerPopupLine.path = path.CGPath;
-    self.layerPopupLine.strokeColor = [[UIColor blackColor] CGColor];
+    self.layerPopupLine.strokeColor = color;//[[UIColor blackColor] CGColor];
     self.layerPopupLine.fillColor = nil;
     self.layerPopupLine.lineWidth = 1.0f;
     self.layerPopupLine.lineDashPattern = @[@4, @1];
@@ -162,8 +174,9 @@
     
     CAShapeLayer *circle = [CAShapeLayer layer];
     circle.lineWidth = 1;
-    circle.strokeColor = [UIColor blackColor].CGColor;
-    //circle.fillColor = [UIColor whiteColor].CGColor;
+    //rgb(41, 128, 185)
+    circle.strokeColor = color;//[UIColor blackColor].CGColor;
+    circle.fillColor = color;
     circle.bounds = CGRectMake(0, 0, radius * 2.0, radius * 2.0);
     circle.position = CGPointMake(end.x,
                                   marker.primary ? end.y + radius : end.y - radius);
@@ -184,15 +197,21 @@
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(end.x - radius,
                                                                marker.primary ? end.y : end.y - radius * 2.0,
                                                                radius * 2.0, radius * 2.0)];
-    label.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:12];
+    label.font = [UIFont fontWithName:@"HelveticaNeue" size:13];
     label.textColor = [UIColor whiteColor];
     label.textAlignment = NSTextAlignmentCenter;
     CGFloat value = marker.primary ? _slider.convertToSecondary([marker.value floatValue]) : _slider.convertToPrimary([marker.value floatValue]);
-    label.text = [NSString stringWithFormat:@"%0.1f", value];
+    if (!marker.primary && _slider.primaryFormatter) {
+        label.text = _slider.primaryFormatter(value);
+    } else if (marker.primary && _slider.secondaryFormatter) {
+        label.text = _slider.secondaryFormatter(value);
+    } else {
+        label.text = [NSString stringWithFormat:@"%0.1f", value];
+    }
     
     CABasicAnimation *colorAnimation = [CABasicAnimation animationWithKeyPath:@"fillColor"];
-    colorAnimation.fromValue = (__bridge id)[UIColor colorWithRed:0 green:0 blue:0 alpha:0].CGColor;
-    colorAnimation.toValue = (__bridge id)[UIColor colorWithRed:0 green:0 blue:0 alpha:1].CGColor;
+    colorAnimation.fromValue = (__bridge id)[UIColor colorWithRed:0.16 green:0.5 blue:0.725 alpha:0.0].CGColor;;
+    colorAnimation.toValue = (__bridge id)color;//(__bridge id)[UIColor colorWithRed:0 green:0 blue:0 alpha:1].CGColor;
     colorAnimation.duration = 1.0;
     colorAnimation.repeatCount = 1.0;
     colorAnimation.removedOnCompletion = NO;

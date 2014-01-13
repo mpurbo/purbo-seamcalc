@@ -10,6 +10,7 @@
 #import "ScaleMarker.h"
 
 typedef CGFloat (^ConverterBlock)(CGFloat value);
+typedef NSString *(^FormatterBlock)(CGFloat value);
 
 @interface SeamCalcScale : UIView
 
@@ -32,6 +33,9 @@ typedef CGFloat (^ConverterBlock)(CGFloat value);
 
 @property (nonatomic, copy) ConverterBlock convertToPrimary;
 @property (nonatomic, copy) ConverterBlock convertToSecondary;
+
+@property (nonatomic, copy) FormatterBlock primaryFormatter;
+@property (nonatomic, copy) FormatterBlock secondaryFormatter;
 
 @property (nonatomic, strong) SeamCalcScale *scale;
 

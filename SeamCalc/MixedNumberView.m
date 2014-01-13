@@ -139,9 +139,10 @@
         CGFloat fractWidth = frame.size.width * 0.6;
         CGFloat fractLeft = frame.size.width - fractWidth;
         // whole
+        CGFloat magicNumber = 3.0;
         self.labelWhole = [self labelForNumber:self.whole
                                   startingSize:20.0
-                                          rect:CGRectMake(0.0, 0.0, wholeWidth, frame.size.height)];
+                                          rect:CGRectMake(0.0, -magicNumber, wholeWidth, frame.size.height)];
         [self addSubview:self.labelWhole];
         // numerator
         self.labelNumerator = [self labelForNumber:self.numerator
@@ -181,6 +182,11 @@
         ret = [UIFont fontWithDescriptor:ret.fontDescriptor size:ret.pointSize - 1];
         size = [string sizeWithAttributes:@{NSFontAttributeName:ret}];
     }
+    // reduce size even more so it the text doesn't fill the whole box, except if the font is small already
+    if (ret.pointSize > 12.0) {
+        ret = [UIFont fontWithDescriptor:ret.fontDescriptor size:ret.pointSize - 1];
+    }
+    NSLog(@"Size: %@, pt: %f", NSStringFromCGSize(size), ret.pointSize);
     return ret;
 }
 
