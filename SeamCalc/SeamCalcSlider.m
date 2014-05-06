@@ -13,6 +13,8 @@
 
 @interface SeamCalcHandle : UIView
 
+@property (nonatomic, strong) ScaleTheme *theme;
+
 @end
 
 @interface SeamCalcScale() {
@@ -36,6 +38,7 @@
 @property (nonatomic, strong) NSArray *secondaryScaleLabels;
 
 - (id)initWithSlider:(SeamCalcSlider *)slider frame:(CGRect)frame;
+- (void)cleanupLineAndLabels;
 
 @end
 
@@ -60,6 +63,13 @@
 
 - (void)initComponents
 {
+    if (self.scale) {
+        [self.scale removeFromSuperview];
+    }
+    if (self.handle) {
+        [self.handle removeFromSuperview];
+    }
+    
     self.handle = [[SeamCalcHandle alloc] initWithFrame:CGRectMake(0.0,
                                                                    self.frame.size.height/2.0 - self.handleSize/2.0,
                                                                    self.handleSize,
@@ -72,6 +82,17 @@
     
     [self addSubview:self.scale];
     [self addSubview:self.handle];
+}
+
+- (void)updateTheme:(ScaleTheme *)theme
+{
+    self.theme = theme;
+    self.scale.theme = theme;
+    self.handle.theme = theme;
+    [self.scale cleanupLineAndLabels];
+    [self.scale setNeedsDisplay];
+    [self.handle setNeedsDisplay];
+    [self setNeedsLayout];
 }
 
 - (void)awakeFromNib
@@ -186,8 +207,24 @@
     CGRect borderRect = CGRectInset(rect, lineWidth * 0.5, lineWidth * 0.5);
     
     CGContextRef context = UIGraphicsGetCurrentContext();
+    
+    /*
     CGContextSetRGBStrokeColor(context, 0.0, 0.0, 0.0, 1.0);
     CGContextSetRGBFillColor(context, 1.0, 1.0, 1.0, 1.0);
+    */
+    /*
+    CGContextSetRGBStrokeColor(context, 1.0, 1.0, 1.0, 1.0);
+    CGContextSetRGBFillColor(context, 0.0, 0.0, 0.0, 1.0);
+    */
+    CGFloat strokeR, strokeG, strokeB, strokeA;
+    CGFloat fillR, fillG, fillB, fillA;
+    
+    [_theme.handleStrokeColor getRed:&strokeR green:&strokeG blue:&strokeB alpha:&strokeA];
+    [_theme.handleFillColor getRed:&fillR green:&fillG blue:&fillB alpha:&fillA];
+    
+    CGContextSetRGBStrokeColor(context, strokeR, strokeG, strokeB, strokeA);
+    CGContextSetRGBFillColor(context, fillR, fillG, fillB, fillA);
+    
     CGContextSetLineWidth(context, lineWidth);
     CGContextFillEllipseInRect (context, borderRect);
     CGContextStrokeEllipseInRect(context, borderRect);
@@ -214,9 +251,33 @@
     return self;
 }
 
+- (void)cleanupLineAndLabels
+{
+    if (_primaryScaleLabels) {
+        for (id label in _primaryScaleLabels) {
+            if ([label class] == [MixedNumberView class]) {
+                [label removeFromSuperview];
+            }
+        }
+    }
+    
+    if (_secondaryScaleLabels) {
+        for (id label in _secondaryScaleLabels) {
+            if ([label class] == [MixedNumberView class]) {
+                [label removeFromSuperview];
+            }
+        }
+    }
+    
+    self.primaryScaleOffsets = nil;
+    self.secondaryScaleOffsets = nil;
+    self.primaryScaleLabels = nil;
+    self.secondaryScaleLabels = nil;
+}
+
 - (void)initValues
 {
-    //NSLog(@"Initializing scale offset values & labels");
+    NSLog(@"Initializing scale offset values & labels");
     
     // marker maximum height
     markerMaxHeight = self.frame.size.height/2.0;
@@ -334,8 +395,17 @@
         
         CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
         size_t num_locations = 2;
+        /*
         CGFloat locations_l[2] = { 0.0, 1.0 };
         CGFloat locations_r[2] = { 1.0, 0.0 };
+        */
+        /*
+        CGFloat locations_l[2] = { 1.0, 0.2 };
+        CGFloat locations_r[2] = { 0.2, 1.0 };
+        */
+        CGFloat locations_l[2] = { _theme.leftGrayLevelStart, _theme.leftGrayLevelEnd };
+        CGFloat locations_r[2] = { _theme.rightGrayLevelStart, _theme.rightGrayLevelEnd };
+        
         CGFloat components[8] =	{ SC_GRAY, 0.0, 0.0, 0.0, 1.0 };
         
         CGGradientRef gradient_l = CGGradientCreateWithColorComponents(colorSpace, components, locations_l, num_locations);
@@ -388,15 +458,29 @@
     // simple asymptotic function:
     // f(x) = 1/x, for x >= 0, but we're only interested in x >= 1 (so that f(x) will always be 1 or <= 1
     
+    //@property (nonatomic, assign) CGFloat distanceDenominator;
+    //@property (nonatomic, assign) BOOL lightTheme;
+
     CGFloat distance = fabs(current - center);
     CGFloat x = 1.0;
     if (distance > 0.0) {
-        x = distance/10.0;
+        //x = distance/10.0;
+        //x = distance/20.0;
+        x = distance/_theme.distanceDenominator;
     }
 
-    CGFloat gray = 1.0 - ((1.0/x) * SC_GRAY_LEVEL);
-    if (gray < 0.0) {
-        gray = 0.0;
+    CGFloat gray;
+    
+    if (_theme.lightTheme) {
+        gray = 1.0 - ((1.0/x) * SC_GRAY_LEVEL);
+        if (gray < 0.0) {
+            gray = 0.0;
+        }
+    } else {
+        gray = ((1.0/x) * SC_GRAY_LEVEL);
+        if (gray > 1.0) {
+            gray = 1.0;
+        }
     }
     
     return gray;

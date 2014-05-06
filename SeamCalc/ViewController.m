@@ -8,6 +8,8 @@
 
 #import "ViewController.h"
 #import "SeamCalcSlider.h"
+#import "ScaleTheme.h"
+#import "Settings.h"
 
 @interface CircleFinishedDelegate : NSObject
 
@@ -25,14 +27,17 @@
 @property (nonatomic, strong) CAShapeLayer *layerPopupCircle;
 @property (nonatomic, strong) UILabel *labelPopupText;
 
+@property (nonatomic, assign) CGFloat primaryDistLimit;
+
+@property (nonatomic, strong) ScaleTheme *theme;
+
 @end
+
 
 @implementation ViewController
 
-- (void)viewDidLoad
+- (void)setupMmOnTop
 {
-    [super viewDidLoad];
-    
     _slider.primaryScaleMarkers = @[[ScaleMarker markerWithInt:0 lengthProportion:1.0 labelHeightProportion:0.15],
                                     [ScaleMarker markerWithInt:5 lengthProportion:0.5 labelVisible:NO],
                                     [ScaleMarker markerWithInt:10 lengthProportion:1.0 labelHeightProportion:0.15],
@@ -62,14 +67,122 @@
         return [NSString stringWithFormat:@"%d", (int)roundf(value)];
     };
     
-    [_slider addTarget:self action:@selector(sliderValueChanged:) forControlEvents:UIControlEventValueChanged];
+    _slider.value = 0;
+    _slider.maxValue = 40;
+    _primaryDistLimit = 1.0;
     
+    _labelTop.text = @"mm";
+    _labelBottom.text = @"inch";
+    
+    [_slider addTarget:self action:@selector(sliderValueChanged:) forControlEvents:UIControlEventValueChanged];
+}
+
+- (void)setupInchOnTop
+{
+    _slider.primaryScaleMarkers = @[[ScaleMarker markerWithFloat:0.125 lengthProportion:0.5 labelHeightProportion:0.15], // 1/8
+                                    [ScaleMarker markerWithFloat:0.25 lengthProportion:1.0 labelHeightProportion:0.15],  // 1/4
+                                    [ScaleMarker markerWithFloat:0.375 lengthProportion:0.5 labelHeightProportion:0.15], // 3/8
+                                    [ScaleMarker markerWithFloat:0.5 lengthProportion:1.0 labelHeightProportion:0.15],   // 1/2
+                                    [ScaleMarker markerWithFloat:0.625 lengthProportion:0.5 labelHeightProportion:0.15], // 5/8
+                                    [ScaleMarker markerWithFloat:0.75 lengthProportion:1.0 labelHeightProportion:0.15],  // 3/4
+                                    [ScaleMarker markerWithFloat:0.875 lengthProportion:0.5 labelHeightProportion:0.15], // 7/8
+                                    [ScaleMarker markerWithFloat:1.5 lengthProportion:1.0 labelHeightProportion:0.15]    // 1 1/2
+                                    ];
+    
+    _slider.secondaryScaleMarkers = @[[ScaleMarker markerWithInt:0 lengthProportion:1.0 labelHeightProportion:0.15],
+                                      [ScaleMarker markerWithInt:5 lengthProportion:0.5 labelVisible:NO],
+                                      [ScaleMarker markerWithInt:10 lengthProportion:1.0 labelHeightProportion:0.15],
+                                      [ScaleMarker markerWithInt:15 lengthProportion:0.5 labelVisible:NO],
+                                      [ScaleMarker markerWithInt:20 lengthProportion:1.0 labelHeightProportion:0.15],
+                                      [ScaleMarker markerWithInt:25 lengthProportion:0.5 labelVisible:NO],
+                                      [ScaleMarker markerWithInt:30 lengthProportion:1.0 labelHeightProportion:0.15],
+                                      [ScaleMarker markerWithInt:35 lengthProportion:0.5 labelVisible:NO],
+                                      [ScaleMarker markerWithInt:40 lengthProportion:1.0 labelHeightProportion:0.15]
+                                      ];
+    
+    _slider.convertToPrimary = ^CGFloat(CGFloat value) {
+        return value * 0.0393700787;
+    };
+    _slider.convertToSecondary = ^CGFloat(CGFloat value) {
+        return value / 0.0393700787;
+    };
+    _slider.secondaryFormatter = ^NSString *(CGFloat value) {
+        return [NSString stringWithFormat:@"%d", (int)roundf(value)];
+    };
+    
+    _slider.value = 0;
+    _slider.maxValue = 1.5748;
+    _primaryDistLimit = 0.0375;
+    
+    _labelTop.text = @"inch";
+    _labelBottom.text = @"mm";
+    
+    [_slider addTarget:self action:@selector(sliderValueChanged:) forControlEvents:UIControlEventValueChanged];
+}
+
+- (void)setupLightTheme
+{
+    self.theme = [[ScaleTheme alloc] init];
+    _theme.backgroundColor = [UIColor whiteColor];
+    _theme.labelColor = [UIColor blackColor];
+    _theme.handleStrokeColor = [UIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:1.0];
+    _theme.handleFillColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:1.0];
+    _theme.leftGrayLevelStart = 0.0;
+    _theme.leftGrayLevelEnd = 1.0;
+    _theme.rightGrayLevelStart = 1.0;
+    _theme.rightGrayLevelEnd = 0.0;
+    _theme.distanceDenominator = 10.0;
+    _theme.lightTheme = YES;
+    _theme.valueHelperColor = [UIColor colorWithRed:0.16 green:0.5 blue:0.725 alpha:0.9];
+    
+    self.view.backgroundColor = _theme.backgroundColor;
+    [_labelBottom setTextColor:_theme.labelColor];
+    [_labelTop setTextColor:_theme.labelColor];
+    [_slider updateTheme:_theme];
+}
+
+- (void)setupDarkTheme
+{
+    self.theme = [[ScaleTheme alloc] init];
+    _theme.backgroundColor = [UIColor blackColor];
+    _theme.labelColor = [UIColor whiteColor];
+    _theme.handleStrokeColor = [UIColor colorWithRed:1.0 green:1.0 blue:1.0 alpha:1.0];
+    _theme.handleFillColor = [UIColor colorWithRed:0.0 green:0.0 blue:0.0 alpha:1.0];
+    _theme.leftGrayLevelStart = 1.0;
+    _theme.leftGrayLevelEnd = 0.2;
+    _theme.rightGrayLevelStart = 0.2;
+    _theme.rightGrayLevelEnd = 1.0;
+    _theme.distanceDenominator = 20.0;
+    _theme.lightTheme = NO;
+    _theme.valueHelperColor = [UIColor colorWithRed:0.6745 green:0.196 blue:0.294 alpha:0.9];
+    
+    self.view.backgroundColor = _theme.backgroundColor;
+    [_labelBottom setTextColor:_theme.labelColor];
+    [_labelTop setTextColor:_theme.labelColor];
+    [_slider updateTheme:_theme];
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     
+    if ([[Settings getTheme] isEqualToString:MMP_VALUE_THEME_MORNING]) {
+        [self setupLightTheme];
+    } else {
+        [self setupDarkTheme];
+    }
+    
+    if ([Settings getOrientation] == MMPSAOrientationMmOnTop) {
+        [self setupMmOnTop];
+    } else {
+        [self setupInchOnTop];
+    }
+
     self.navigationController.navigationBarHidden = YES;
 }
 
@@ -105,20 +218,20 @@
 - (void)checkValueStays:(NSTimer*)timer
 {
     NSNumber *prevValue = timer.userInfo;
-    //NSLog(@"Check value stays: %f == %f?", _slider.value, [prevValue floatValue]);
-    if ([prevValue floatValue] == _slider.value) {
-        //NSLog(@"Yay value stays! Do the animation thing!");
+    NSLog(@"Check value stays: %f == %f?", _slider.value, [prevValue floatValue]);
+    if (fequal([prevValue floatValue], _slider.value)) {
+        NSLog(@"Yay value stays! Do the animation thing!");
         if (_slider.value > 0.0) {
             // only when value > 0.0
             ScaleMarker *marker1 = [_slider.scale findMarkerClosestTo:_slider.value inMarkers:_slider.primaryScaleMarkers];
             ScaleMarker *marker2 = [_slider.scale findMarkerClosestTo:_slider.value inMarkers:_slider.secondaryScaleMarkers];
             // calc distance
-            //NSLog(@"prim = %f, sec = %f", [marker1.value floatValue], [marker2.value floatValue]);
+            NSLog(@"prim = %f, sec = %f", [marker1.value floatValue], [marker2.value floatValue]);
             float val1_prim = [marker1.value floatValue];
             float val2_prim = _slider.convertToPrimary([marker2.value floatValue]);
             float valdist_prim = fabsf(val1_prim - val2_prim);
-            //NSLog(@"prim = %f, sec = %f, dist = %f", val1_prim, val2_prim, valdist_prim);
-            if (valdist_prim > 1.0) {
+            NSLog(@"prim = %f, sec = %f, dist = %f", val1_prim, val2_prim, valdist_prim);
+            if (valdist_prim > _primaryDistLimit) {
                 float distval1 = fabsf(val1_prim - _slider.value);
                 float distval2 = fabsf(val2_prim - _slider.value);
                 CGFloat x = [_slider valueToX:_slider.value];
@@ -148,7 +261,9 @@
     [path moveToPoint:start];
     [path addLineToPoint:end];
     
-    CGColorRef color = [UIColor colorWithRed:0.16 green:0.5 blue:0.725 alpha:0.9].CGColor;
+    //CGColorRef color = [UIColor colorWithRed:0.16 green:0.5 blue:0.725 alpha:0.9].CGColor;
+    //CGColorRef color = [UIColor colorWithRed:0.6745 green:0.196 blue:0.294 alpha:0.9].CGColor;
+    CGColorRef color = _theme.valueHelperColor.CGColor;
     
     self.layerPopupLine = [CAShapeLayer layer];
     self.layerPopupLine.frame = self.view.bounds;

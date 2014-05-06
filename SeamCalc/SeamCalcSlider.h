@@ -8,11 +8,14 @@
 
 #import <UIKit/UIKit.h>
 #import "ScaleMarker.h"
+#import "ScaleTheme.h"
 
 typedef CGFloat (^ConverterBlock)(CGFloat value);
 typedef NSString *(^FormatterBlock)(CGFloat value);
 
 @interface SeamCalcScale : UIView
+
+@property (nonatomic, strong) ScaleTheme *theme;
 
 - (ScaleMarker *)findMarkerClosestTo:(CGFloat)value;
 - (ScaleMarker *)findMarkerClosestTo:(CGFloat)value inMarkers:(NSArray *)markers;
@@ -39,6 +42,8 @@ typedef NSString *(^FormatterBlock)(CGFloat value);
 
 @property (nonatomic, strong) SeamCalcScale *scale;
 
+@property (nonatomic, strong) ScaleTheme *theme;
+
 /*
 - (id)initWithFrame:(CGRect)frame
          handleSize:(CGFloat)handleSize
@@ -50,5 +55,8 @@ typedef NSString *(^FormatterBlock)(CGFloat value);
 
 - (CGFloat)xToValue:(CGFloat)x;
 - (CGFloat)valueToX:(CGFloat)value;
+
+- (void)updateTheme:(ScaleTheme *)theme;
+- (void)initComponents;
 
 @end

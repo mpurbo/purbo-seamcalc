@@ -9,6 +9,11 @@
 /* Begin PBXBuildFile section */
 		A90EBFC018840CDF00915512 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A90EBFBF18840CDF00915512 /* SettingsViewController.m */; };
 		A939A223184CD0D100C50BCE /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A939A222184CD0D000C50BCE /* CoreText.framework */; };
+		A9517D221915C668003E5403 /* ScaleTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = A9517D211915C668003E5403 /* ScaleTheme.m */; };
+		A9517D2519178BA0003E5403 /* Settings.m in Sources */ = {isa = PBXBuildFile; fileRef = A9517D2419178BA0003E5403 /* Settings.m */; };
+		A9517D2819185730003E5403 /* ThemeSettingsViewControllerTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A9517D2719185730003E5403 /* ThemeSettingsViewControllerTableViewController.m */; };
+		A9517D2B19185748003E5403 /* OrientationSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A9517D2A19185748003E5403 /* OrientationSettingsViewController.m */; };
+		A9517D2D191858A1003E5403 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A9517D2C191858A1003E5403 /* Localizable.strings */; };
 		A988E2261853DEC800C09394 /* ScaleMarker.m in Sources */ = {isa = PBXBuildFile; fileRef = A988E2251853DEC800C09394 /* ScaleMarker.m */; };
 		A996E2701858808E00843FFF /* MixedNumberView.m in Sources */ = {isa = PBXBuildFile; fileRef = A996E26F1858808E00843FFF /* MixedNumberView.m */; };
 		A996E27218589B6A00843FFF /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A996E27118589B6A00843FFF /* QuartzCore.framework */; };
@@ -44,6 +49,15 @@
 		A90EBFBE18840CDF00915512 /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
 		A90EBFBF18840CDF00915512 /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
 		A939A222184CD0D000C50BCE /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
+		A9517D201915C668003E5403 /* ScaleTheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScaleTheme.h; sourceTree = "<group>"; };
+		A9517D211915C668003E5403 /* ScaleTheme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScaleTheme.m; sourceTree = "<group>"; };
+		A9517D2319178BA0003E5403 /* Settings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Settings.h; sourceTree = "<group>"; };
+		A9517D2419178BA0003E5403 /* Settings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Settings.m; sourceTree = "<group>"; };
+		A9517D2619185730003E5403 /* ThemeSettingsViewControllerTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThemeSettingsViewControllerTableViewController.h; sourceTree = "<group>"; };
+		A9517D2719185730003E5403 /* ThemeSettingsViewControllerTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThemeSettingsViewControllerTableViewController.m; sourceTree = "<group>"; };
+		A9517D2919185748003E5403 /* OrientationSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OrientationSettingsViewController.h; sourceTree = "<group>"; };
+		A9517D2A19185748003E5403 /* OrientationSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OrientationSettingsViewController.m; sourceTree = "<group>"; };
+		A9517D2C191858A1003E5403 /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 		A988E2241853DEC800C09394 /* ScaleMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScaleMarker.h; sourceTree = "<group>"; };
 		A988E2251853DEC800C09394 /* ScaleMarker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScaleMarker.m; sourceTree = "<group>"; };
 		A988E2271853DF8600C09394 /* ScaleMarkerPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScaleMarkerPrivate.h; sourceTree = "<group>"; };
@@ -110,6 +124,8 @@
 				A988E2251853DEC800C09394 /* ScaleMarker.m */,
 				A996E26E1858808E00843FFF /* MixedNumberView.h */,
 				A996E26F1858808E00843FFF /* MixedNumberView.m */,
+				A9517D201915C668003E5403 /* ScaleTheme.h */,
+				A9517D211915C668003E5403 /* ScaleTheme.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -157,6 +173,12 @@
 				A9EB0DC818372BD400E1BD77 /* ViewController.m */,
 				A90EBFBE18840CDF00915512 /* SettingsViewController.h */,
 				A90EBFBF18840CDF00915512 /* SettingsViewController.m */,
+				A9517D2619185730003E5403 /* ThemeSettingsViewControllerTableViewController.h */,
+				A9517D2719185730003E5403 /* ThemeSettingsViewControllerTableViewController.m */,
+				A9517D2919185748003E5403 /* OrientationSettingsViewController.h */,
+				A9517D2A19185748003E5403 /* OrientationSettingsViewController.m */,
+				A9517D2319178BA0003E5403 /* Settings.h */,
+				A9517D2419178BA0003E5403 /* Settings.m */,
 				A996E27318589BB300843FFF /* Views */,
 				A9EB0DCA18372BD400E1BD77 /* Images.xcassets */,
 				A9EB0DB618372BD400E1BD77 /* Supporting Files */,
@@ -171,6 +193,7 @@
 				A9EB0DB818372BD400E1BD77 /* InfoPlist.strings */,
 				A9EB0DBB18372BD400E1BD77 /* main.m */,
 				A9EB0DBD18372BD400E1BD77 /* SeamCalc-Prefix.pch */,
+				A9517D2C191858A1003E5403 /* Localizable.strings */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -269,6 +292,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A9517D2D191858A1003E5403 /* Localizable.strings in Resources */,
 				A9EB0DC618372BD400E1BD77 /* Main_iPad.storyboard in Resources */,
 				A9EB0DCB18372BD400E1BD77 /* Images.xcassets in Resources */,
 				A9EB0DC318372BD400E1BD77 /* Main_iPhone.storyboard in Resources */,
@@ -293,7 +317,11 @@
 			files = (
 				A9EB0DC918372BD400E1BD77 /* ViewController.m in Sources */,
 				A9EB0DC018372BD400E1BD77 /* AppDelegate.m in Sources */,
+				A9517D2519178BA0003E5403 /* Settings.m in Sources */,
+				A9517D2819185730003E5403 /* ThemeSettingsViewControllerTableViewController.m in Sources */,
+				A9517D221915C668003E5403 /* ScaleTheme.m in Sources */,
 				A988E2261853DEC800C09394 /* ScaleMarker.m in Sources */,
+				A9517D2B19185748003E5403 /* OrientationSettingsViewController.m in Sources */,
 				A996E2701858808E00843FFF /* MixedNumberView.m in Sources */,
 				A9EB0DEC1838C2CA00E1BD77 /* SeamCalcSlider.m in Sources */,
 				A9EB0DBC18372BD400E1BD77 /* main.m in Sources */,
@@ -372,7 +400,7 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Mamad Purbo (5PKTX6V969)";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -412,7 +440,7 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Mamad Purbo (5PKTX6V969)";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;

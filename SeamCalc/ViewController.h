@@ -13,4 +13,7 @@
 
 @property (nonatomic, strong) IBOutlet SeamCalcSlider *slider;
 
+@property (strong, nonatomic) IBOutlet UILabel *labelTop;
+@property (strong, nonatomic) IBOutlet UILabel *labelBottom;
+
 @end

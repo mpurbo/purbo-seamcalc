@@ -1,19 +1,19 @@
 //
-//  SettingsViewController.m
+//  OrientationSettingsViewController.m
 //  SeamCalc
 //
-//  Created by Purbo Mohamad on 1/13/14.
+//  Created by Purbo Mohamad on 5/6/14.
 //  Copyright (c) 2014 Purbo Mohamad. All rights reserved.
 //
 
-#import "SettingsViewController.h"
+#import "OrientationSettingsViewController.h"
 #import "Settings.h"
 
-@interface SettingsViewController ()
+@interface OrientationSettingsViewController ()
 
 @end
 
-@implementation SettingsViewController
+@implementation OrientationSettingsViewController
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -28,15 +28,7 @@
 {
     [super viewDidLoad];
     
-    self.navigationItem.title = NSLocalizedString(@"SettingsTitle", @"Settings");
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    
-    self.navigationController.navigationBarHidden = NO;
-    [(UITableView *)self.view reloadData];
+    self.navigationItem.title = NSLocalizedString(@"SettingsOrientationTitle", @"Orientation");
 }
 
 - (void)didReceiveMemoryWarning
@@ -59,22 +51,21 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *CellIdentifier = @"Cell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
     
     if (indexPath.row == 0) {
-        cell.textLabel.text = NSLocalizedString(@"SettingsThemeTitle", @"Theme");
-        if ([[Settings getTheme] isEqualToString:MMP_VALUE_THEME_MORNING]) {
-            cell.detailTextLabel.text = NSLocalizedString(@"SettingsTheme0", @"Morning");
+        cell.textLabel.text = NSLocalizedString(@"SettingsOrientation0", @"mm on top");
+        if ([Settings getOrientation] == MMPSAOrientationMmOnTop) {
+            cell.accessoryType = UITableViewCellAccessoryCheckmark;
         } else {
-            cell.detailTextLabel.text = NSLocalizedString(@"SettingsTheme1", @"Dusk");
+            cell.accessoryType = UITableViewCellAccessoryNone;
         }
     } else {
-        cell.textLabel.text = NSLocalizedString(@"SettingsOrientationTitle", @"Orientation");
-        if ([Settings getOrientation] == MMPSAOrientationMmOnTop) {
-            cell.detailTextLabel.text = NSLocalizedString(@"SettingsOrientation0", @"mm on top");
+        cell.textLabel.text = NSLocalizedString(@"SettingsOrientation1", @"inch on top");
+        if ([Settings getOrientation] == MMPSAOrientationInchOnTop) {
+            cell.accessoryType = UITableViewCellAccessoryCheckmark;
         } else {
-            cell.detailTextLabel.text = NSLocalizedString(@"SettingsOrientation1", @"inch on top");
+            cell.accessoryType = UITableViewCellAccessoryNone;
         }
     }
     
@@ -84,10 +75,11 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.row == 0) {
-        [self performSegueWithIdentifier:@"settingsToThemes" sender:self];
+        [Settings setOrientation:MMPSAOrientationMmOnTop];
     } else {
-        [self performSegueWithIdentifier:@"settingsToOrientations" sender:self];
+        [Settings setOrientation:MMPSAOrientationInchOnTop];
     }
+    [(UITableView *)self.view reloadData];
 }
 
 /*
@@ -106,8 +98,7 @@
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         // Delete the row from the data source
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    }   
-    else if (editingStyle == UITableViewCellEditingStyleInsert) {
+    } else if (editingStyle == UITableViewCellEditingStyleInsert) {
         // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
     }   
 }
@@ -132,13 +123,12 @@
 /*
 #pragma mark - Navigation
 
-// In a story board-based application, you will often want to do a little preparation before navigation
+// In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     // Get the new view controller using [segue destinationViewController].
     // Pass the selected object to the new view controller.
 }
-
- */
+*/
 
 @end
