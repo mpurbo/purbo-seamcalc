@@ -184,6 +184,17 @@
     }
 
     self.navigationController.navigationBarHidden = YES;
+    
+    [self setNeedsStatusBarAppearanceUpdate];
+}
+
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    if ([[Settings getTheme] isEqualToString:MMP_VALUE_THEME_MORNING]) {
+        return UIStatusBarStyleDefault;
+    } else {
+        return UIStatusBarStyleLightContent;
+    }
 }
 
 - (void)didReceiveMemoryWarning
