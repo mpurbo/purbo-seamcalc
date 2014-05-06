@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		A90EBFC018840CDF00915512 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A90EBFBF18840CDF00915512 /* SettingsViewController.m */; };
+		A92AF49B1918CAA500BCAA01 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A92AF49A1918CAA500BCAA01 /* MessageUI.framework */; };
+		A92AF49D1918CAC400BCAA01 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A92AF49C1918CAC400BCAA01 /* Social.framework */; };
 		A939A223184CD0D100C50BCE /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A939A222184CD0D000C50BCE /* CoreText.framework */; };
 		A9517D221915C668003E5403 /* ScaleTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = A9517D211915C668003E5403 /* ScaleTheme.m */; };
 		A9517D2519178BA0003E5403 /* Settings.m in Sources */ = {isa = PBXBuildFile; fileRef = A9517D2419178BA0003E5403 /* Settings.m */; };
@@ -33,6 +35,7 @@
 		A9EB0DDC18372BD400E1BD77 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A9EB0DDA18372BD400E1BD77 /* InfoPlist.strings */; };
 		A9EB0DDE18372BD400E1BD77 /* SeamCalcTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A9EB0DDD18372BD400E1BD77 /* SeamCalcTests.m */; };
 		A9EB0DEC1838C2CA00E1BD77 /* SeamCalcSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = A9EB0DEB1838C2CA00E1BD77 /* SeamCalcSlider.m */; };
+		CDA532A9A85F46999430016E /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 69E642F9EAD947FC8D357F60 /* libPods.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,8 +49,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		69E642F9EAD947FC8D357F60 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A90EBFBE18840CDF00915512 /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
 		A90EBFBF18840CDF00915512 /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
+		A92AF49A1918CAA500BCAA01 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
+		A92AF49C1918CAC400BCAA01 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		A939A222184CD0D000C50BCE /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		A9517D201915C668003E5403 /* ScaleTheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScaleTheme.h; sourceTree = "<group>"; };
 		A9517D211915C668003E5403 /* ScaleTheme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScaleTheme.m; sourceTree = "<group>"; };
@@ -86,6 +92,7 @@
 		A9EB0DDD18372BD400E1BD77 /* SeamCalcTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SeamCalcTests.m; sourceTree = "<group>"; };
 		A9EB0DEA1838C2CA00E1BD77 /* SeamCalcSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SeamCalcSlider.h; sourceTree = "<group>"; };
 		A9EB0DEB1838C2CA00E1BD77 /* SeamCalcSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SeamCalcSlider.m; sourceTree = "<group>"; };
+		B836A7BADAA648C39CF1B18B /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,11 +100,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A92AF49D1918CAC400BCAA01 /* Social.framework in Frameworks */,
+				A92AF49B1918CAA500BCAA01 /* MessageUI.framework in Frameworks */,
 				A9EB0DB018372BD400E1BD77 /* Foundation.framework in Frameworks */,
 				A9EB0DB218372BD400E1BD77 /* CoreGraphics.framework in Frameworks */,
 				A939A223184CD0D100C50BCE /* CoreText.framework in Frameworks */,
 				A996E27218589B6A00843FFF /* QuartzCore.framework in Frameworks */,
 				A9EB0DB418372BD400E1BD77 /* UIKit.framework in Frameworks */,
+				CDA532A9A85F46999430016E /* libPods.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -137,6 +147,7 @@
 				A9EB0DD718372BD400E1BD77 /* SeamCalcTests */,
 				A9EB0DAE18372BD400E1BD77 /* Frameworks */,
 				A9EB0DAD18372BD400E1BD77 /* Products */,
+				B836A7BADAA648C39CF1B18B /* Pods.xcconfig */,
 			);
 			sourceTree = "<group>";
 		};
@@ -152,12 +163,15 @@
 		A9EB0DAE18372BD400E1BD77 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A92AF49C1918CAC400BCAA01 /* Social.framework */,
+				A92AF49A1918CAA500BCAA01 /* MessageUI.framework */,
 				A996E27118589B6A00843FFF /* QuartzCore.framework */,
 				A939A222184CD0D000C50BCE /* CoreText.framework */,
 				A9EB0DAF18372BD400E1BD77 /* Foundation.framework */,
 				A9EB0DB118372BD400E1BD77 /* CoreGraphics.framework */,
 				A9EB0DB318372BD400E1BD77 /* UIKit.framework */,
 				A9EB0DD118372BD400E1BD77 /* XCTest.framework */,
+				69E642F9EAD947FC8D357F60 /* libPods.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -223,9 +237,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = A9EB0DE118372BD400E1BD77 /* Build configuration list for PBXNativeTarget "SeamCalc" */;
 			buildPhases = (
+				7AB783FE602A4535911F1005 /* Check Pods Manifest.lock */,
 				A9EB0DA818372BD400E1BD77 /* Sources */,
 				A9EB0DA918372BD400E1BD77 /* Frameworks */,
 				A9EB0DAA18372BD400E1BD77 /* Resources */,
+				E4007FD2172946C6A753358E /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -309,6 +325,39 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		7AB783FE602A4535911F1005 /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		E4007FD2172946C6A753358E /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Pods-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		A9EB0DA818372BD400E1BD77 /* Sources */ = {
@@ -459,6 +508,7 @@
 		};
 		A9EB0DE218372BD400E1BD77 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B836A7BADAA648C39CF1B18B /* Pods.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -472,6 +522,7 @@
 		};
 		A9EB0DE318372BD400E1BD77 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B836A7BADAA648C39CF1B18B /* Pods.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;

@@ -8,6 +8,7 @@
 
 #import "SettingsViewController.h"
 #import "Settings.h"
+#import <TOWebViewController/TOWebViewController.h>
 
 @interface SettingsViewController ()
 
@@ -49,32 +50,61 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 1;
+    return 2;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 2;
+    if (section == 0) {
+        return 2;
+    } else {
+        return 3;
+    }
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    if (section == 0) {
+        return nil;
+    } else {
+        return @"Copyright ©2014 by";
+    }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *CellIdentifier = @"Cell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
-    
-    if (indexPath.row == 0) {
-        cell.textLabel.text = NSLocalizedString(@"SettingsThemeTitle", @"Theme");
-        if ([[Settings getTheme] isEqualToString:MMP_VALUE_THEME_MORNING]) {
-            cell.detailTextLabel.text = NSLocalizedString(@"SettingsTheme0", @"Morning");
+    static NSString *CellCopyrightIdentifier = @"CellCopyright";
+    UITableViewCell *cell = nil;
+
+    if (indexPath.section == 0) {
+        cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+        if (indexPath.row == 0) {
+            cell.textLabel.text = NSLocalizedString(@"SettingsThemeTitle", @"Theme");
+            if ([[Settings getTheme] isEqualToString:MMP_VALUE_THEME_MORNING]) {
+                cell.detailTextLabel.text = NSLocalizedString(@"SettingsTheme0", @"Morning");
+            } else {
+                cell.detailTextLabel.text = NSLocalizedString(@"SettingsTheme1", @"Dusk");
+            }
         } else {
-            cell.detailTextLabel.text = NSLocalizedString(@"SettingsTheme1", @"Dusk");
+            cell.textLabel.text = NSLocalizedString(@"SettingsOrientationTitle", @"Orientation");
+            if ([Settings getOrientation] == MMPSAOrientationMmOnTop) {
+                cell.detailTextLabel.text = NSLocalizedString(@"SettingsOrientation0", @"mm on top");
+            } else {
+                cell.detailTextLabel.text = NSLocalizedString(@"SettingsOrientation1", @"inch on top");
+            }
         }
-    } else {
-        cell.textLabel.text = NSLocalizedString(@"SettingsOrientationTitle", @"Orientation");
-        if ([Settings getOrientation] == MMPSAOrientationMmOnTop) {
-            cell.detailTextLabel.text = NSLocalizedString(@"SettingsOrientation0", @"mm on top");
-        } else {
-            cell.detailTextLabel.text = NSLocalizedString(@"SettingsOrientation1", @"inch on top");
+    } else if (indexPath.section == 1) {
+        cell = [tableView dequeueReusableCellWithIdentifier:CellCopyrightIdentifier forIndexPath:indexPath];
+        if (indexPath.row == 0) {
+            cell.textLabel.text = @"verypurpleperson";
+            cell.detailTextLabel.text = @"www.verypurpleperson.com";
+        } else if (indexPath.row == 1) {
+            cell.textLabel.text = @"Fuwawa Sensei";
+            cell.detailTextLabel.text = @"www.fuwawasensei.com";
+        } else if (indexPath.row == 2) {
+            cell.textLabel.text = @"Mamad Purbo";
+            cell.detailTextLabel.text = @"mamad.purbo.org";
         }
     }
     
@@ -83,10 +113,27 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.row == 0) {
-        [self performSegueWithIdentifier:@"settingsToThemes" sender:self];
-    } else {
-        [self performSegueWithIdentifier:@"settingsToOrientations" sender:self];
+    if (indexPath.section == 0) {
+        if (indexPath.row == 0) {
+            [self performSegueWithIdentifier:@"settingsToThemes" sender:self];
+        } else {
+            [self performSegueWithIdentifier:@"settingsToOrientations" sender:self];
+        }
+    } else if (indexPath.section == 1) {
+        [tableView deselectRowAtIndexPath:indexPath animated:YES];
+        
+        NSURL *url = nil;
+        
+        if (indexPath.row == 0) {
+            url = [NSURL URLWithString:@"www.verypurpleperson.com"];
+        } else if (indexPath.row == 1) {
+            url = [NSURL URLWithString:@"www.fuwawasensei.com"];
+        } else if (indexPath.row == 2) {
+            url = [NSURL URLWithString:@"mamad.purbo.org"];
+        }
+        
+        TOWebViewController *webViewController = [[TOWebViewController alloc] initWithURL:url];
+        [self.navigationController pushViewController:webViewController animated:YES];
     }
 }
 
