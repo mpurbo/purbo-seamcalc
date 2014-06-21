@@ -55,6 +55,7 @@
                                       [ScaleMarker markerWithFloat:0.625 lengthProportion:0.5 labelHeightProportion:0.15], // 5/8
                                       [ScaleMarker markerWithFloat:0.75 lengthProportion:1.0 labelHeightProportion:0.15],  // 3/4
                                       [ScaleMarker markerWithFloat:0.875 lengthProportion:0.5 labelHeightProportion:0.15], // 7/8
+                                      [ScaleMarker markerWithFloat:1.0 lengthProportion:1.0 labelHeightProportion:0.15], // 1
                                       [ScaleMarker markerWithFloat:1.5 lengthProportion:1.0 labelHeightProportion:0.15]    // 1 1/2
                                       ];
     _slider.convertToPrimary = ^CGFloat(CGFloat value) {
@@ -66,6 +67,7 @@
     _slider.primaryFormatter = ^NSString *(CGFloat value) {
         return [NSString stringWithFormat:@"%d", (int)roundf(value)];
     };
+    _slider.secondaryFormatter = nil;
     
     _slider.value = 0;
     _slider.maxValue = 40;
@@ -86,6 +88,7 @@
                                     [ScaleMarker markerWithFloat:0.625 lengthProportion:0.5 labelHeightProportion:0.15], // 5/8
                                     [ScaleMarker markerWithFloat:0.75 lengthProportion:1.0 labelHeightProportion:0.15],  // 3/4
                                     [ScaleMarker markerWithFloat:0.875 lengthProportion:0.5 labelHeightProportion:0.15], // 7/8
+                                    [ScaleMarker markerWithFloat:1.0 lengthProportion:1.0 labelHeightProportion:0.15], // 7/8
                                     [ScaleMarker markerWithFloat:1.5 lengthProportion:1.0 labelHeightProportion:0.15]    // 1 1/2
                                     ];
     
@@ -106,6 +109,7 @@
     _slider.convertToSecondary = ^CGFloat(CGFloat value) {
         return value / 0.0393700787;
     };
+    _slider.primaryFormatter = nil;
     _slider.secondaryFormatter = ^NSString *(CGFloat value) {
         return [NSString stringWithFormat:@"%d", (int)roundf(value)];
     };
