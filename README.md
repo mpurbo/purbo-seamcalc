@@ -14,4 +14,4 @@ purbo-seamcalc is maintained by [Mamad Purbo](https://twitter.com/purubo)
 
 ## License
 
-purbo-seamcalc is available under the MIT license. See the LICENSE file for more info.
+purbo-seamcalc is available under the GPL v3 license. See the LICENSE file or [TLDR](https://tldrlegal.com/license/gnu-general-public-license-v3-(gpl-3)#summary) for more info.
