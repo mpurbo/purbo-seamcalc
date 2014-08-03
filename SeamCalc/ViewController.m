@@ -11,6 +11,8 @@
 #import "ScaleTheme.h"
 #import "Settings.h"
 
+#define ANIMATION_DURATION 0.6
+
 @interface CircleFinishedDelegate : NSObject
 
 @property (nonatomic, strong) UIView *view;
@@ -292,7 +294,7 @@
     [self.view.layer addSublayer:self.layerPopupLine];
     
     CABasicAnimation *pathAnimation = [CABasicAnimation animationWithKeyPath:@"strokeEnd"];
-    pathAnimation.duration = 1.0;
+    pathAnimation.duration = ANIMATION_DURATION;
     pathAnimation.fromValue = [NSNumber numberWithFloat:0.0f];
     pathAnimation.toValue = [NSNumber numberWithFloat:1.0f];
     
@@ -342,7 +344,7 @@
     CABasicAnimation *colorAnimation = [CABasicAnimation animationWithKeyPath:@"fillColor"];
     colorAnimation.fromValue = (__bridge id)[UIColor colorWithRed:0.16 green:0.5 blue:0.725 alpha:0.0].CGColor;;
     colorAnimation.toValue = (__bridge id)color;//(__bridge id)[UIColor colorWithRed:0 green:0 blue:0 alpha:1].CGColor;
-    colorAnimation.duration = 1.0;
+    colorAnimation.duration = ANIMATION_DURATION;
     colorAnimation.repeatCount = 1.0;
     colorAnimation.removedOnCompletion = NO;
     colorAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];
