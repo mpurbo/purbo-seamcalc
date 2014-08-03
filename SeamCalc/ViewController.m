@@ -369,7 +369,11 @@
 
 - (void)animationDidStop:(CABasicAnimation *)animation finished:(BOOL)flag
 {
-    [self.view addSubview:self.label];
+    //NSLog(@"Animation stopped! flag = %d, drawing label", flag);
+    // TODO: probably need to check on something to make sure we can draw the label
+    if (flag) {
+        [self.view addSubview:self.label];
+    }
 }
 
 @end
